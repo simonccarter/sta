@@ -9,8 +9,10 @@ This tool is a lightweight, basic, fast tool for calculating basic descriptive s
 
 ### Installing st
 
+### Usage
+    sta [options] <file>
 
-#### Using st
+#### Using sta
 
 Imagine you have this sample file:
 
@@ -56,13 +58,15 @@ Worried about precision? You can calculate variance instead using the  compsensa
 	--min
 	--max
 	--sd
-	-- population
+	--population
 	--comperative
 
 ### ToDo
 
 	$
 	--Sig fault 11 on incorrect options
+	--add help to options
+	--yet more work to options
 	--Add online varient
 	--Add median, mode, and quantile information
 	--Prettify code
