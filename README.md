@@ -1,7 +1,7 @@
 sta
 ==
 
-simple statistics from the command line interface (CLI), fast.
+Simple statistics from the command line interface (CLI), fast.
 
 ### Description
 
@@ -49,6 +49,15 @@ sta runs in sample mode by default (meaning we normalise with N). If you want to
 Worried about precision? You can calculate variance instead using the  compsensated variant algorithm (http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Compensated_variant): 
 
 	$ cat numbers.txt | sta --var --population --compensated
+
+### Formating
+
+sta works with long doubles, and can process numbers in the following formats:
+	
+	$
+	4.7858757E-39
+	4.7858757E-39
+	4.7858757
 
 ### Options
 
