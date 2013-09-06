@@ -37,9 +37,6 @@ To extract individual bits of information:
 
 sta runs in sample mode by default (meaning we normalise with N). If you want to output the population variance/standard deviation, just add the flag --population
 
- 
-To extract individual bits of information:
-
 	$ cat numbers.txt | sta --sum --sd --var --population
 	sum	sd	var	
 	55	3.02765	9.16667	
@@ -58,6 +55,5 @@ Worried about precision? You can calculate variance instead using the  compsensa
 	--sd
 	-- population
 	--comperative
-
 
 
