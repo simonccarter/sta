@@ -5,12 +5,12 @@ simple statistics from the command line interface (CLI), fast.
 
 ### Description
 
-This tool is a lightweight, basic, fast tool for calculating basic descriptive stastics from the command line. Inspired by https://github.com/nferraz/st, this project differs in that it is written in c++, allowing for the fast computation of statistics given large data sets. 
+This tool is a lightweight, basic, fast tool for calculating basic descriptive stastics from the command line. Inspired by https://github.com/nferraz/st, this project differs in that it is written in c++, allowing for the fast computation of statistics given large data sets. It works with stdin, so can be used downline of other programs. 
 
 ### Installing st
 
 ### Usage
-    sta [options] <file>
+    cat file | sta [options]
 
 #### Using sta
 
