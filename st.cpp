@@ -98,19 +98,19 @@ void compute_global_stats(vector<long double> * stats, vector<long double> * poi
 	(*global_stats)["max"] = (*stats).at(3);
 	
 	
-	if( (*opts).find("population") != (*opts).end() && (*opts).find("compensative") != (*opts).end()){
+	if( (*opts).find("population") != (*opts).end() && (*opts).find("compensated") != (*opts).end()){
 		(*global_stats)["sd"] = pop_sd_comp;
 		(*global_stats)["var"] = comp_var_p;
 	}
-	if( (*opts).find("population") != (*opts).end() && (*opts).find("compensative") == (*opts).end() ) {
+	if( (*opts).find("population") != (*opts).end() && (*opts).find("compensated") == (*opts).end() ) {
 		(*global_stats)["sd"] = pop_sd;
 		(*global_stats)["var"] = var_p;
 	}
-	if( (*opts).find("population") == (*opts).end() && (*opts).find("compensative") != (*opts).end()){
+	if( (*opts).find("population") == (*opts).end() && (*opts).find("compensated") != (*opts).end()){
 		(*global_stats)["sd"] = samp_sd_comp;
 		(*global_stats)["var"] = comp_var_s;
 	}
-	if( (*opts).find("population") == (*opts).end() && (*opts).find("compensative") == (*opts).end() ) {
+	if( (*opts).find("population") == (*opts).end() && (*opts).find("compensated") == (*opts).end() ) {
 		(*global_stats)["sd"] = samp_sd;
 		(*global_stats)["var"] = var_s;
 	}
@@ -203,7 +203,7 @@ void set_flags(int argc, char **argv, map<string,int>  * opts){
 	if (sd_flag)
 		(*opts)["sd"] = 1;
 	if (comp_flag)
-		(*opts)["compensative"] = 1;
+		(*opts)["compensated"] = 1;
 	if (sample_flag)
 		(*opts)["sample"] = 1;
 	if (population_flag)
