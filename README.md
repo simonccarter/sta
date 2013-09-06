@@ -7,6 +7,9 @@ simple statistics from the command line interface (CLI), fast.
 
 This tool is a lightweight, basic, fast tool for calculating basic descriptive stastics from the command line. Inspired by https://github.com/nferraz/st, this project differs in that it is written in c++, allowing for the fast computation of statistics given large data sets. 
 
+### Installing st
+
+
 #### Using st
 
 Imagine you have this sample file:
@@ -43,7 +46,7 @@ sta runs in sample mode by default (meaning we normalise with N). If you want to
 
 Worried about precision? You can calculate variance instead using the  compsensated variant algorithm (http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Compensated_variant): 
 
-	$ sta --var --population --compensated
+	$ cat numbers.txt | sta --var --population --compensated
 
 ### Options
 
@@ -56,4 +59,21 @@ Worried about precision? You can calculate variance instead using the  compsensa
 	-- population
 	--comperative
 
+### ToDo
 
+	$
+	--Sig fault 11 on incorrect options
+	--Add online varient
+	--Add median, mode, and quantile information
+	--Prettify code
+	--Init some structures as globals, instead of passing around.
+
+### Contributing
+
+I've not written c++ in a long time, so please do send comments, suggestions and bug reports to:
+
+https://github.com/simonccarter/sta/issues
+
+Or fork the code on github:
+
+https://github.com/simonccarter/sta
