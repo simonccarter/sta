@@ -19,6 +19,7 @@ static int population_flag;
 static int sample_flag;
 static int comp_flag;
 static int var_flag;
+static int help_flag;
 
 //running stats needed
 void compute_line_stats(vector<long double> * stats){
@@ -39,6 +40,9 @@ void compute_line_stats(vector<long double> * stats){
 	if ((*stats).at(3) < stat){
 		(*stats).at(3) = stat; 
 	}
+}
+
+void print_help(){
 }
 
 //global descriptive statistics
@@ -84,7 +88,7 @@ void compute_global_stats(vector<long double> * stats, vector<long double> * poi
 
 	//init global_stats
 
-	(*global_stats)["n"] = n;
+	(*global_stats)["N"] = n;
 	(*global_stats)["mean"] = mean;
 
 	(*global_stats)["sampl_sd"] = samp_sd;
@@ -212,7 +216,8 @@ void set_flags(int argc, char **argv, map<string,int>  * opts){
 		(*opts)["mean"] = 1;
 	if (var_flag)
 		(*opts)["var"] = 1;
-
+	if (help_flag)
+		print_help();
 
        /* Print any remaining command line arguments (not options). */
 	if (optind < argc){
