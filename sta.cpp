@@ -29,8 +29,8 @@ vector<long double> * points = new vector<long double>();
 map<string, long double> * global_stats = new map<string, long double>();
 map<string,int> * opts = new map<string, int>();	
 
-//running stats needed
-void compute_line_stats(vector<long double> * stats){
+/* STATS COMPUTED AT THE LINE */
+void compute_line_stats(){
 	long double stat = (*stats).at(0);
 
 	//sum
@@ -53,7 +53,7 @@ void compute_line_stats(vector<long double> * stats){
 void print_help(){
 }
 
-//global descriptive statistics
+/* COMPUTE GLOBAL STATS */
 void compute_global_stats(){
 	//mean
 	long double mean = (*stats).at(1) / (*stats).at(4); 
@@ -156,7 +156,7 @@ void print_stats(){
 	cout<<endl;
 }
 
-void set_flags(int argc, char **argv, map<string,int>  * opts){
+void read_parameters(int argc, char **argv){
 	int c;
 	while (1){
 	   static struct option long_options[] = {
@@ -249,7 +249,7 @@ void set_flags(int argc, char **argv, map<string,int>  * opts){
 }
 
 int main (int argc, char **argv){
-	set_flags(argc, argv,opts);
+	read_parameters(argc, argv);
 	long double sum = 0;
 	long double n = 0;
 	long double min = INT_MAX;
@@ -271,7 +271,7 @@ int main (int argc, char **argv){
 		if(input_line=="") continue;
 		long double stat = (long double) ::atof(input_line.c_str());
 		(*stats).at(0) = stat;
-		compute_line_stats(stats);
+		compute_line_stats();
 		(*points).push_back(stat);
 	}
 	compute_global_stats();
