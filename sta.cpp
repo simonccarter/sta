@@ -9,6 +9,7 @@
 #include <map>
 using namespace std;
 
+/* FLAGS */
 static int n_flag;
 static int min_flag;
 static int max_flag;
@@ -20,6 +21,13 @@ static int sample_flag;
 static int comp_flag;
 static int var_flag;
 static int help_flag;
+
+
+/* DATA STRUCTURES */
+vector<long double> * stats = new vector<long double>();
+vector<long double> * points = new vector<long double>();
+map<string, long double> * global_stats = new map<string, long double>();
+map<string,int> * opts = new map<string, int>();	
 
 //running stats needed
 void compute_line_stats(vector<long double> * stats){
@@ -46,7 +54,7 @@ void print_help(){
 }
 
 //global descriptive statistics
-void compute_global_stats(vector<long double> * stats, vector<long double> * points, map<string, long double> * global_stats, map<string,int> * opts){
+void compute_global_stats(){
 	//mean
 	long double mean = (*stats).at(1) / (*stats).at(4); 
 	long double n = (*stats).at(4);
@@ -60,7 +68,6 @@ void compute_global_stats(vector<long double> * stats, vector<long double> * poi
 		sum += (diff * diff);
 		sum3 += diff;
 	}	
-
 
 	//for compensated variant biased
 	long double comp_var_s = (sum-((sum3*sum3)/n))/n;	
@@ -121,12 +128,12 @@ void compute_global_stats(vector<long double> * stats, vector<long double> * poi
 
 }
 
-void print_stats(map<string, long double> * stats, map<string,int> * opts){
+void print_stats(){
 
 	vector<string> opts_ordered; 
 	opts_ordered.push_back("N");
-	opts_ordered.push_back("max");
 	opts_ordered.push_back("min");
+	opts_ordered.push_back("max");
 	opts_ordered.push_back("sum");
 	opts_ordered.push_back("mean");
 	opts_ordered.push_back("sd");
@@ -144,7 +151,7 @@ void print_stats(map<string, long double> * stats, map<string,int> * opts){
 	for(vector<string>::iterator ii=opts_ordered.begin(); ii!=opts_ordered.end();++ii){
 		if ( (*opts).find(*ii)  ==  (*opts).end())
 			continue;
-		cout << (*stats)[*ii] << "\t";
+		cout << (*global_stats)[*ii] << "\t";
 	}	
 	cout<<endl;
 }
@@ -242,7 +249,6 @@ void set_flags(int argc, char **argv, map<string,int>  * opts){
 }
 
 int main (int argc, char **argv){
-	map<string,int> * opts = new map<string, int>();	
 	set_flags(argc, argv,opts);
 	long double sum = 0;
 	long double n = 0;
@@ -251,7 +257,6 @@ int main (int argc, char **argv){
 	long double mean = 0;
 	long double sd = 0;
 
-	vector<long double> * stats = new vector<long double>();
 	(*stats).push_back(sum);
 	(*stats).push_back(sum);
 	(*stats).push_back(min);
@@ -259,8 +264,6 @@ int main (int argc, char **argv){
 	(*stats).push_back(n); 
 	(*stats).push_back(mean); 
 	(*stats).push_back(sd); 
-        vector<long double> * points = new vector<long double>();
-	map<string, long double> * global_stats = new map<string, long double>();
 
 	while(cin){
 		string input_line;
@@ -271,8 +274,8 @@ int main (int argc, char **argv){
 		compute_line_stats(stats);
 		(*points).push_back(stat);
 	}
-	compute_global_stats(stats, points, global_stats, opts);
-	print_stats(global_stats,opts);
+	compute_global_stats();
+	print_stats();
 	
 	delete points;
 	delete stats;
