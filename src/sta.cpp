@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <string>
+#include <algorithm> 
 #include <map>
 
 using namespace std;
@@ -22,7 +23,8 @@ static int sample_flag;
 static int comp_flag;
 static int var_flag;
 static int help_flag;
-
+static int sort_flag;
+static int quartiles_flag;
 
 /* DATA STRUCTURES */
 vector<long double> * stats = new vector<long double>();
@@ -71,6 +73,22 @@ void print_help(){
 	cerr << " " << endl;	
 }
 
+void compute_quartiles(long double &n){
+	sort((*points).begin(), (*points).end());
+	long double per = n/100;
+	int myints[] = {25,50,75};
+	vector<int> qu(myints, myints + sizeof(myints) / sizeof(int) );
+	for(vector<int>::iterator ii = qu.begin(); ii != qu.end(); ++ii){
+		long double index = *ii * n / 100;
+		int r = ((int) index) % 2;
+		cout << "Index: "<< index <<" r: " << r <<endl;
+
+		/* -1 instead of +1 due to 0 index base */
+		long double q = r == 0 ? (*points)[index] : ((*points)[index] + (*points)[index-1])/2;
+		cout << *ii << ": " << q << endl; 
+	} 
+}
+
 /* COMPUTE GLOBAL STATS */
 void compute_global_stats(){
 	//mean
@@ -110,17 +128,22 @@ void compute_global_stats(){
 
 	//pop sd	
 	long double pop_sd = sqrt(var_p);
+	
+	if(sort_flag){
+		compute_quartiles(n);
+	}	
 
-	//init global_stats
-
+	/* INIT GLOBAL STATS */
 	(*global_stats)["N"] = n;
 	(*global_stats)["mean"] = mean;
 
+	/***
 	(*global_stats)["sampl_sd"] = samp_sd;
 	(*global_stats)["pop_sd"] = pop_sd;
 
 	(*global_stats)["pop_sd_comp"] = pop_sd_comp;
 	(*global_stats)["samp_sd_comp"] = samp_sd_comp;
+	***/
 
 	(*global_stats)["sum"] = (*stats).at(1);
 	(*global_stats)["min"] = (*stats).at(2);
@@ -189,6 +212,7 @@ void read_parameters(int argc, char **argv){
 	       {"n",   no_argument,       &n_flag, 1},
 	       {"population",   no_argument,       &population_flag, 1},
 	       {"compensated",   no_argument,       &comp_flag, 1},	
+	       {"quartiles",   no_argument,       &quartiles_flag, 1},	
 	       {0, 0, 0, 0}
 	     };
 	   int option_index = 0;
@@ -236,6 +260,9 @@ void read_parameters(int argc, char **argv){
 		(*opts)["var"] = 1;
 	if (help_flag)
 		print_help();
+	if (quartiles_flag)
+		(*opts)["quartiles"] = 1;
+		sort_flag = 1;	
 
        /* Print any remaining command line arguments (not options). */
 	if (optind < argc){
