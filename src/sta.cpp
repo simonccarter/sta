@@ -7,6 +7,7 @@
 #include <getopt.h>
 #include <string>
 #include <map>
+
 using namespace std;
 
 /* FLAGS */
@@ -169,16 +170,12 @@ void read_parameters(int argc, char **argv){
 	       {"var",   no_argument,       &var_flag, 1},
 	       {"n",   no_argument,       &n_flag, 1},
 	       {"population",   no_argument,       &population_flag, 1},
-	       {"sample",   no_argument,       &sample_flag, 1},
-	       {"compensated",   no_argument,       &comp_flag, 1},
+	       {"compensated",   no_argument,       &comp_flag, 1},	
+	       {0, 0, 0, 0}
 	     };
-	   /* getopt_long stores the option index here. */
 	   int option_index = 0;
-
-	   c = getopt_long (argc, argv, "abc:d:f:",
+	   c = getopt_long_only (argc, argv, "",
 			    long_options, &option_index);
-
-	   /* Detect the end of the options. */
 	   if (c == -1)
 	     break;
 
@@ -193,13 +190,9 @@ void read_parameters(int argc, char **argv){
 		 printf (" with arg %s", optarg);
 	       printf ("\n");
 	       break;
-
 	     case '?':
-	       /* getopt_long already printed an error message. */
-	       break;
-
 	     default:
-	       abort ();
+		abort;
 	     }
 	 }
 
@@ -245,7 +238,6 @@ void read_parameters(int argc, char **argv){
 		(*opts)["mean"] = 1;
 		(*opts)["sd"] = 1;
 	}
-
 }
 
 int main (int argc, char **argv){
