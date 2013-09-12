@@ -52,6 +52,23 @@ void compute_line_stats(){
 }
 
 void print_help(){
+	cerr << "Usage: cat file.txt | sta [options]" << endl;	
+	cerr << " " << endl;	
+	cerr << "--help		prints this help " << endl;	
+	cerr << " " << endl;	
+	cerr << "Desriptive Stastistics: " << endl;	
+	cerr << "--sum		sum" << endl;	
+	cerr << "--mean		average" << endl;	
+	cerr << "--min		min point" << endl;	
+	cerr << "--max		max point" << endl;	
+	cerr << "--sd		standard deviation" << endl;	
+	cerr << "--var		variance" << endl;	
+	cerr << "--n		sample size" << endl;	
+	cerr << " " << endl;	
+	cerr << "Options: " << endl;	
+	cerr << "--compensated		compenssated variant" << endl;	
+	cerr << "--population		unbiased estimator (n-1)" << endl;	
+	cerr << " " << endl;	
 }
 
 /* COMPUTE GLOBAL STATS */
@@ -163,6 +180,7 @@ void read_parameters(int argc, char **argv){
 	   static struct option long_options[] = {
 	       /* These options set a flag. */
 	       {"sum", no_argument,       &sum_flag, 1},
+	       {"help", no_argument,       &help_flag, 1},
 	       {"min",   no_argument,       &min_flag, 1},
 	       {"max",   no_argument,       &max_flag, 1},
 	       {"mean",   no_argument,       &mean_flag, 1},

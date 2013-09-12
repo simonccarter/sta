@@ -54,14 +54,12 @@ Worried about precision? You can calculate variance instead using the  compsensa
 
 sta works with long doubles, and can process numbers in the following formats:
 	
-	$
 	4.7858757E-39
 	4.7858757E-39
 	4.7858757
 
 ### Options
 
-	$
 	--sum
 	--mean
 	--min
@@ -72,14 +70,9 @@ sta works with long doubles, and can process numbers in the following formats:
 
 ### ToDo
 
-	$
-	--Sig fault 11 on incorrect options
-	--add help to options
-	--yet more work to options
 	--Add online varient
 	--Add median, mode, and quantile information
 	--Prettify code
-	--Init some structures as globals, instead of passing around.
 
 ### Contributing
 
