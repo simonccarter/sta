@@ -55,7 +55,7 @@ Worried about precision? You can calculate variance instead using the  compsensa
 sta works with long doubles, and can process numbers in the following formats:
 	
 	4.7858757E-39
-	4.7858757E-39
+	4.7858757e-39
 	4.7858757
 
 ### Options
@@ -66,7 +66,7 @@ sta works with long doubles, and can process numbers in the following formats:
 	--max
 	--sd
 	--population
-	--comperative
+	--compensated
 
 ### ToDo
 
