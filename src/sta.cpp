@@ -23,8 +23,9 @@ static int sample_flag;
 static int comp_flag;
 static int var_flag;
 static int help_flag;
-static int sort_flag;
+static int sort_flag; //redundent?
 static int quartiles_flag;
+static int all_flag;
 
 /* DATA STRUCTURES */
 vector<long double> * stats = new vector<long double>();
@@ -54,6 +55,7 @@ void compute_line_stats(){
 }
 
 void print_help(){
+	cerr << " " << endl;	
 	cerr << "Usage: cat file.txt | sta [options]" << endl;	
 	cerr << " " << endl;	
 	cerr << "--help		prints this help " << endl;	
@@ -66,6 +68,7 @@ void print_help(){
 	cerr << "--sd		standard deviation" << endl;	
 	cerr << "--var		variance" << endl;	
 	cerr << "--n		sample size" << endl;	
+	cerr << "--q		quartiles" << endl;	
 	cerr << " " << endl;	
 	cerr << "Options: " << endl;	
 	cerr << "--compensated		compenssated variant" << endl;	
@@ -74,19 +77,23 @@ void print_help(){
 }
 
 void compute_quartiles(long double &n){
-	sort((*points).begin(), (*points).end());
-	long double per = n/100;
-	int myints[] = {25,50,75};
-	vector<int> qu(myints, myints + sizeof(myints) / sizeof(int) );
-	for(vector<int>::iterator ii = qu.begin(); ii != qu.end(); ++ii){
-		long double index = *ii * n / 100;
-		int r = ((int) index) % 2;
-		cout << "Index: "<< index <<" r: " << r <<endl;
+	int const size = (*points).size();
+	int const Q1 = size / 4;
+	int const Q2 = size / 2;
+	int const Q3 = Q1 + Q2;
 
-		/* -1 instead of +1 due to 0 index base */
-		long double q = r == 0 ? (*points)[index] : ((*points)[index] + (*points)[index-1])/2;
-		cout << *ii << ": " << q << endl; 
-	} 
+	/** PARTIAL SORT **/
+	nth_element((*points).begin(),          (*points).begin() + Q1, (*points).end());
+	nth_element((*points).begin() + Q1 + 1, (*points).begin() + Q2, (*points).end());
+	nth_element((*points).begin() + Q2 + 1, (*points).begin() + Q3, (*points).end());
+
+	long double firq = (*points)[Q1];		
+	long double lasq = (*points)[Q3];		
+	long double median = size%2!=0 ? (*points)[Q2] : ((*points)[Q2]+(*points)[Q2-1])/2;
+	
+	(*global_stats)["Q1"] = firq;
+	(*global_stats)["median"] = median; 
+	(*global_stats)["Q3"] = lasq;
 }
 
 /* COMPUTE GLOBAL STATS */
@@ -128,28 +135,24 @@ void compute_global_stats(){
 
 	//pop sd	
 	long double pop_sd = sqrt(var_p);
-	
+
 	if(sort_flag){
 		compute_quartiles(n);
 	}	
+
+	long double sderr = (samp_sd / sqrt(n))
 
 	/* INIT GLOBAL STATS */
 	(*global_stats)["N"] = n;
 	(*global_stats)["mean"] = mean;
 
-	/***
-	(*global_stats)["sampl_sd"] = samp_sd;
-	(*global_stats)["pop_sd"] = pop_sd;
-
-	(*global_stats)["pop_sd_comp"] = pop_sd_comp;
-	(*global_stats)["samp_sd_comp"] = samp_sd_comp;
-	***/
-
+	/** HORRIBLE, referening by index position !?!**/
 	(*global_stats)["sum"] = (*stats).at(1);
 	(*global_stats)["min"] = (*stats).at(2);
 	(*global_stats)["max"] = (*stats).at(3);
-	
-	
+
+	(*global_stats)["sterr"] = stderr;
+
 	if( (*opts).find("population") != (*opts).end() && (*opts).find("compensated") != (*opts).end()){
 		(*global_stats)["sd"] = pop_sd_comp;
 		(*global_stats)["var"] = comp_var_p;
@@ -170,18 +173,37 @@ void compute_global_stats(){
 }
 
 void print_stats(){
-
-	vector<string> opts_ordered; 
-	opts_ordered.push_back("N");
-	opts_ordered.push_back("min");
-	opts_ordered.push_back("max");
-	opts_ordered.push_back("sum");
-	opts_ordered.push_back("mean");
-	opts_ordered.push_back("sd");
-	opts_ordered.push_back("var");
-
+	vector<string> opts_ordered;
+	if(!quartiles_flag && !all_flag){ 
+		opts_ordered.push_back("N");
+		opts_ordered.push_back("min");
+		opts_ordered.push_back("max");
+		opts_ordered.push_back("sum");
+		opts_ordered.push_back("mean");
+		opts_ordered.push_back("sd");
+		opts_ordered.push_back("sderr");
+		opts_ordered.push_back("var");
+	}else if(!all_flag){
+		opts_ordered.push_back("N");
+		opts_ordered.push_back("min");
+		opts_ordered.push_back("Q1");
+		opts_ordered.push_back("median");
+		opts_ordered.push_back("Q3");
+		opts_ordered.push_back("max");
+	}else{
+		opts_ordered.push_back("N");
+		opts_ordered.push_back("min");
+		opts_ordered.push_back("Q1");
+		opts_ordered.push_back("median");
+		opts_ordered.push_back("Q3");
+		opts_ordered.push_back("max");
+		opts_ordered.push_back("sum");
+		opts_ordered.push_back("mean");
+		opts_ordered.push_back("sd");
+		opts_ordered.push_back("sderr");
+		opts_ordered.push_back("var");
+	}
 	string output = " "; 
-
 	for(vector<string>::iterator ii=opts_ordered.begin(); ii!=opts_ordered.end();++ii){
 		if ( (*opts).find(*ii)  ==  (*opts).end())
 			continue;
@@ -212,7 +234,8 @@ void read_parameters(int argc, char **argv){
 	       {"n",   no_argument,       &n_flag, 1},
 	       {"population",   no_argument,       &population_flag, 1},
 	       {"compensated",   no_argument,       &comp_flag, 1},	
-	       {"quartiles",   no_argument,       &quartiles_flag, 1},	
+	       {"q",   no_argument,       &quartiles_flag, 1},	
+	       {"all",   no_argument,       &all_flag, 1},	
 	       {0, 0, 0, 0}
 	     };
 	   int option_index = 0;
@@ -258,11 +281,34 @@ void read_parameters(int argc, char **argv){
 		(*opts)["mean"] = 1;
 	if (var_flag)
 		(*opts)["var"] = 1;
-	if (help_flag)
-		print_help();
-	if (quartiles_flag)
+	if (all_flag)
 		(*opts)["quartiles"] = 1;
+		(*opts)["min"] = 1;
+		(*opts)["Q1"] = 1;
+		(*opts)["median"] = 1;
+		(*opts)["Q3"] = 1;
+		(*opts)["max"] = 1;
+		(*opts)["var"] = 1;
+		(*opts)["mean"] = 1;
+		(*opts)["sum"] = 1;
+		(*opts)["N"] = 1;
+		(*opts)["sd"] = 1;
+		(*opts)["sderr"] = 1;
+		sort_flag = 1;
+	if (help_flag){
+		print_help();
+		return;
+	}
+	if (quartiles_flag){
+		(*opts)["N"] = 1;
+		(*opts)["quartiles"] = 1;
+		(*opts)["min"] = 1;
+		(*opts)["Q1"] = 1;
+		(*opts)["median"] = 1;
+		(*opts)["Q3"] = 1;
+		(*opts)["max"] = 1;
 		sort_flag = 1;	
+	}
 
        /* Print any remaining command line arguments (not options). */
 	if (optind < argc){
@@ -273,7 +319,7 @@ void read_parameters(int argc, char **argv){
 	}	
 
 	/**
-	If opts is empty, print out all info, and assume sample statistics
+	If opts is empty, print out summary info, and assume sample statistics
 	**/
 	if((*opts).size()==0){
 		(*opts)["sum"] = 1;
@@ -282,6 +328,7 @@ void read_parameters(int argc, char **argv){
 		(*opts)["max"] = 1;
 		(*opts)["mean"] = 1;
 		(*opts)["sd"] = 1;
+		(*opts)["sderr"] = 1;
 	}
 }
 
