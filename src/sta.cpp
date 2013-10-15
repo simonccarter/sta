@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <climits>
+#include <float.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,30 +38,24 @@ static int all_flag;
 /* VARIABLES */
 string delimiter = "\t";
 
+long double N = 0, Min = LDBL_MAX, Max = LDBL_MIN, sum = 0;
+
 /* DATA STRUCTURES */
-vector<long double> stats;
 vector<long double> points;
 map<string, long double> global_stats;
 map<string, int> opts;
 
 /* STATS COMPUTED AT THE LINE */
-void compute_line_stats(){
-	long double stat = stats.at(0);
+static void compute_line_stats(long double x){
+    sum += x;
+    N++;
 
-	//sum
-	stats.at(1) += stat;
-
-	//N
-	stats.at(4)+=1;
-
-	//min
-	if (stats.at(2) > stat){
-		stats.at(2) = stat;
+	if (Min > x){
+		Min = x;
 	}
 
-	//max
-	if (stats.at(3) < stat){
-		stats.at(3) = stat; 
+	if (Max < x){
+		Max = x; 
 	}
 }
 
@@ -115,24 +109,23 @@ void compute_quartiles(long double &n){
 
 /* COMPUTE GLOBAL STATS */
 void compute_global_stats(){
-	long double n = stats.at(4);
-	long double mean = stats.at(1) / n; 
+	long double mean = sum / N; 
 
 	//sum of squared deviations
-	long double sum = 0;
+	long double ssd = 0;
 	//for compensated variant
 	long double sum3 = 0;
 	for (size_t index=0; index<points.size(); ++index){
 		long double diff = points.at(index) - mean;
-		sum += (diff * diff);
+		ssd += (diff * diff);
 		sum3 += diff;
 	}	
 
 	//for compensated variant biased
-	long double comp_var_s = (sum-((sum3*sum3)/n))/n;	
+	long double comp_var_s = (ssd-((sum3*sum3)/N))/N;	
 
 	//for compensated variant unbiased when n is not equal to |population|
-	long double comp_var_p = (sum-((sum3*sum3)/n))/n-1;	
+	long double comp_var_p = (ssd-((sum3*sum3)/N))/N-1;	
 
 	//sample sd comp
 	long double samp_sd_comp = sqrt(comp_var_s);
@@ -141,10 +134,10 @@ void compute_global_stats(){
 	long double pop_sd_comp = sqrt(comp_var_p);
 
 	//sample variance
-	long double var_s = sum/n;
+	long double var_s = ssd/N;
 
 	//population variance
-	long double var_p = sum/(n-1);
+	long double var_p = ssd/(N-1);
 
 	//sample sd	
 	long double samp_sd = sqrt(var_s);
@@ -153,25 +146,25 @@ void compute_global_stats(){
 	long double pop_sd = sqrt(var_p);
 
 	if(sort_flag){
-		compute_quartiles(n);
+		compute_quartiles(N);
 	}	
 
 	//standard error of the mean	
-	long double sderr_s = (samp_sd / sqrt(n));
-	long double sderr_p = (pop_sd / sqrt(n));
+	long double sderr_s = (samp_sd / sqrt(N));
+	long double sderr_p = (pop_sd / sqrt(N));
 
 	//standard error of the mean, comp variants
-	long double sderr_s_c = (samp_sd_comp / sqrt(n));
-	long double sderr_p_c = (pop_sd_comp / sqrt(n));
+	long double sderr_s_c = (samp_sd_comp / sqrt(N));
+	long double sderr_p_c = (pop_sd_comp / sqrt(N));
 	
 	/* INIT GLOBAL STATS */
-	global_stats["N"] = n;
+	global_stats["N"] = N;
 	global_stats["mean"] = mean;
 
 	/** HORRIBLE, referening by index position !?!**/
-	global_stats["sum"] = stats.at(1);
-	global_stats["min"] = stats.at(2);
-	global_stats["max"] = stats.at(3);
+	global_stats["sum"] = sum;
+	global_stats["min"] = Min;
+	global_stats["max"] = Max;
 
 	//population stats with compensated version
 	if(opts.find("population") != opts.end() && opts.find("compensated") != opts.end()){
@@ -386,28 +379,13 @@ void read_parameters(int argc, char **argv){
 
 int main (int argc, char **argv){
 	read_parameters(argc, argv);
-	long double sum = 0;
-	long double n = 0;
-	long double min = INT_MAX;
-	long double max = INT_MIN;
-	long double mean = 0;
-	long double sd = 0;
-
-	stats.push_back(sum);
-	stats.push_back(sum);
-	stats.push_back(min);
-	stats.push_back(max); 
-	stats.push_back(n); 
-	stats.push_back(mean); 
-	stats.push_back(sd); 
 
 	while(cin){
 		string input_line;
 		getline(cin,input_line);
 		if(input_line=="") continue;
 		long double stat = (long double) ::atof(input_line.c_str());
-		stats.at(0) = stat;
-		compute_line_stats();
+		compute_line_stats(stat);
 		points.push_back(stat);
 	}
 	compute_global_stats();
