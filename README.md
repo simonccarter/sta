@@ -58,15 +58,30 @@ Worried about precision? You can calculate variance instead using the  compsensa
 
 Want to compute quartiles? Run:
 
-	$ cat file | sta --q
+	$ cat numbers.txt | sta --q
 	N	min	Q1	median	Q3	max	
 	100	1	26	50.5	76	100	
 
 Don't want to see the column names? Run:
 
-	$ cat file | sta --q --brief
+	$ cat numbers.txt | sta --q --brief
 	100	1	100	5050	50.5	29.0115
 
+To transpose the output, run:
+
+	$ cat numbers.txt | sta --q --transpose
+	N	100
+	min	1
+	Q1	26
+	median	50.5
+	Q3	76
+	max	100
+
+By default, sta uses a biased estimator. To use an unbiased estimator, i.e normalise by n-1:
+
+	$ cat numbers.txt | sta --population
+	N	min	max	sum	mean	sd	sderr	
+	100	1	100	5050	50.5	29.0115	2.90115
 ### Formating
 
 sta works with long doubles, and can process numbers in the following formats:
