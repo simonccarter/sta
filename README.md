@@ -5,17 +5,18 @@ Simple statistics from the command line interface (CLI), fast.
 
 ### Description
 
-This is a lightweight, fast tool for calculating basic descriptive stastics from the command line. Inspired by https://github.com/nferraz/st, this project differs in that it is written in C++, allowing for faster computation of statistics given larger non-trivial data sets.
+This is a lightweight, fast tool for calculating basic descriptive statistics from the command line. Inspired by https://github.com/nferraz/st, this project differs in that it is written in C++, allowing for faster computation of statistics given larger non-trivial data sets.
 
 Additions include the choice of biased vs unbiased estimators and the option to use the compensated variant algorithm. 
 
-Given a file of 1,000,000 ascending numbers, a simple test on a 2.5GHz dual core macbook using bash time showed sta takes less than a second to complete, compared to 14 seconds using st.
+Given a file of 1,000,000 ascending numbers, a simple test on a 2.5GHz dual-core MacBook using Bash `time` showed `sta` takes less than a second to complete, compared to 14 seconds using `st`.
 
 ### Installing sta
 
-Run ./autogen.sh, ./configure, make, and make install.
+Run `./autogen.sh`, `./configure`, `make`, and `make install`.
  
 ### Usage
+
     sta [options] < file
 
 #### Using sta
@@ -34,7 +35,7 @@ Imagine you have this sample file:
     9
     10
 
-Running sta is simple: 
+Running `sta` is simple: 
 
 	$ sta < numbers.txt
 	N	max	min	sum	mean	sd	
@@ -46,13 +47,13 @@ To extract individual bits of information:
 	sum	sd	var	
 	55	2.87228	8.25
 
-sta runs in sample mode by default (meaning we normalise with N). If you want to unbiased statistics, i.e. normalise with N-1, then just add the --population flag
+`sta` runs in sample mode by default (meaning we normalise with N). If you want to use unbiased statistics, i.e. normalise with N-1, then just add the `--population` flag
 
 	$ sta --sum --sd --var --population < numbers.txt
 	sum	sd	var	
 	55	3.02765	9.16667	
 
-Worried about precision? You can calculate variance instead using the compsensated variant algorithm (http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Compensated_variant): 
+Worried about precision? You can calculate variance instead using the [compensated variant algorithm](http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Compensated_variant): 
 
 	$ sta --var --population --compensated < numbers.txt
 
@@ -77,9 +78,9 @@ To transpose the output, run:
 	Q3	76
 	max	100
 
-### Formating
+### Formatting
 
-sta works with long doubles, and can process numbers in the following formats:
+`sta` works with long doubles, and can process numbers in the following formats:
 	
 	4.7858757E-39
 	4.7858757e-39
@@ -110,7 +111,7 @@ and
 
 	$./examples/create_example_rand.pl n > some_file_with_n_numbers_rand  
 
-To see how long st or sta takes to output the various statistics, call:
+To see how long `st` or `sta` takes to output the various statistics, call:
 
 	$./examples/time_sta.sh examples/large_file_1m	
 
@@ -120,7 +121,7 @@ and
 
 ### ToDo
 
-	--Add online varient
+	--Add online variant
 	
 ### Contributing
 
