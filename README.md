@@ -65,13 +65,13 @@ sta works with long doubles, and can process numbers in the following formats:
 	--min
 	--max
 	--sd
+	--sderr
 	--population
 	--compensated
 
 ### ToDo
 
 	--Add online varient
-	--Add median, mode, and quantile information
 	--Prettify code
 
 ### Contributing

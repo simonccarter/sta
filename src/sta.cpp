@@ -18,6 +18,7 @@ static int max_flag;
 static int mean_flag;
 static int sum_flag;
 static int sd_flag;
+static int sderr_flag;
 static int population_flag;
 static int sample_flag;
 static int comp_flag;
@@ -140,7 +141,7 @@ void compute_global_stats(){
 		compute_quartiles(n);
 	}	
 
-	long double sderr = (samp_sd / sqrt(n))
+	long double sderr = (samp_sd / sqrt(n));
 
 	/* INIT GLOBAL STATS */
 	(*global_stats)["N"] = n;
@@ -151,7 +152,7 @@ void compute_global_stats(){
 	(*global_stats)["min"] = (*stats).at(2);
 	(*global_stats)["max"] = (*stats).at(3);
 
-	(*global_stats)["sterr"] = stderr;
+	(*global_stats)["sderr"] = sderr;
 
 	if( (*opts).find("population") != (*opts).end() && (*opts).find("compensated") != (*opts).end()){
 		(*global_stats)["sd"] = pop_sd_comp;
@@ -174,39 +175,23 @@ void compute_global_stats(){
 
 void print_stats(){
 	vector<string> opts_ordered;
-	if(!quartiles_flag && !all_flag){ 
-		opts_ordered.push_back("N");
-		opts_ordered.push_back("min");
-		opts_ordered.push_back("max");
-		opts_ordered.push_back("sum");
-		opts_ordered.push_back("mean");
-		opts_ordered.push_back("sd");
-		opts_ordered.push_back("sderr");
-		opts_ordered.push_back("var");
-	}else if(!all_flag){
-		opts_ordered.push_back("N");
-		opts_ordered.push_back("min");
-		opts_ordered.push_back("Q1");
-		opts_ordered.push_back("median");
-		opts_ordered.push_back("Q3");
-		opts_ordered.push_back("max");
-	}else{
-		opts_ordered.push_back("N");
-		opts_ordered.push_back("min");
-		opts_ordered.push_back("Q1");
-		opts_ordered.push_back("median");
-		opts_ordered.push_back("Q3");
-		opts_ordered.push_back("max");
-		opts_ordered.push_back("sum");
-		opts_ordered.push_back("mean");
-		opts_ordered.push_back("sd");
-		opts_ordered.push_back("sderr");
-		opts_ordered.push_back("var");
-	}
+	opts_ordered.push_back("N");
+	opts_ordered.push_back("min");
+	opts_ordered.push_back("Q1");
+	opts_ordered.push_back("median");
+	opts_ordered.push_back("Q3");
+	opts_ordered.push_back("max");
+	opts_ordered.push_back("sum");
+	opts_ordered.push_back("mean");
+	opts_ordered.push_back("sd");
+	opts_ordered.push_back("sderr");
+	opts_ordered.push_back("var");
+	
 	string output = " "; 
 	for(vector<string>::iterator ii=opts_ordered.begin(); ii!=opts_ordered.end();++ii){
-		if ( (*opts).find(*ii)  ==  (*opts).end())
+		if ( (*opts).find(*ii)  ==  (*opts).end()){
 			continue;
+		}
 		cout << *ii << "\t";
 
 	}	
@@ -230,6 +215,7 @@ void read_parameters(int argc, char **argv){
 	       {"max",   no_argument,       &max_flag, 1},
 	       {"mean",   no_argument,       &mean_flag, 1},
 	       {"sd",   no_argument,       &sd_flag, 1},
+	       {"sderr",   no_argument,       &sderr_flag, 1},
 	       {"var",   no_argument,       &var_flag, 1},
 	       {"n",   no_argument,       &n_flag, 1},
 	       {"population",   no_argument,       &population_flag, 1},
@@ -271,6 +257,8 @@ void read_parameters(int argc, char **argv){
 		(*opts)["max"] = 1;
 	if (sd_flag)
 		(*opts)["sd"] = 1;
+	if (sderr_flag)
+		(*opts)["sderr"] = 1;
 	if (comp_flag)
 		(*opts)["compensated"] = 1;
 	if (sample_flag)
@@ -281,7 +269,7 @@ void read_parameters(int argc, char **argv){
 		(*opts)["mean"] = 1;
 	if (var_flag)
 		(*opts)["var"] = 1;
-	if (all_flag)
+	if (all_flag){
 		(*opts)["quartiles"] = 1;
 		(*opts)["min"] = 1;
 		(*opts)["Q1"] = 1;
@@ -295,6 +283,7 @@ void read_parameters(int argc, char **argv){
 		(*opts)["sd"] = 1;
 		(*opts)["sderr"] = 1;
 		sort_flag = 1;
+	}
 	if (help_flag){
 		print_help();
 		return;
