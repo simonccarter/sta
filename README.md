@@ -16,7 +16,7 @@ Given a file of 1,000,000 ascending numbers, a simple test on a 2.5GHz dual core
 Run ./autogen.sh, ./configure, make, and make install.
  
 ### Usage
-    cat file | sta [options]
+    sta [options] < file
 
 #### Using sta
 
@@ -36,40 +36,40 @@ Imagine you have this sample file:
 
 To run sta is simple: 
 
-	$ cat numbers.txt | sta
+	$ sta < numbers.txt
 	N	max	min	sum	mean	sd	
 	100	10	1	55	5.5	2.87228	 
 
 To extract individual bits of information:
 
-	$ cat numbers.txt | sta --sum --sd --var
+	$ sta --sum --sd --var < numbers.txt
 	sum	sd	var	
 	55	2.87228	8.25
 
 sta runs in sample mode by default (meaning we normalise with N). If you want to output the population variance/standard deviation, just add the flag --population
 
-	$ cat numbers.txt | sta --sum --sd --var --population
+	$ sta --sum --sd --var --population < numbers.txt
 	sum	sd	var	
 	55	3.02765	9.16667	
 
 Worried about precision? You can calculate variance instead using the  compsensated variant algorithm (http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Compensated_variant): 
 
-	$ cat numbers.txt | sta --var --population --compensated
+	$ sta --var --population --compensated < numbers.txt
 
 Want to compute quartiles? Run:
 
-	$ cat numbers.txt | sta --q
+	$ sta --q < numbers.txt
 	N	min	Q1	median	Q3	max	
 	100	1	26	50.5	76	100	
 
 Don't want to see the column names? Run:
 
-	$ cat numbers.txt | sta --q --brief
+	$ sta --q --brief < numbers.txt
 	100	1	100	5050	50.5	29.0115
 
 To transpose the output, run:
 
-	$ cat numbers.txt | sta --q --transpose
+	$ sta --q --transpose < numbers.txt
 	N	100
 	min	1
 	Q1	26
@@ -79,7 +79,7 @@ To transpose the output, run:
 
 By default, sta uses a biased estimator. To use an unbiased estimator, i.e normalise by n-1:
 
-	$ cat numbers.txt | sta --population
+	$ sta --population < numbers.txt
 	N	min	max	sum	mean	sd	sderr	
 	100	1	100	5050	50.5	29.0115	2.90115
 ### Formating

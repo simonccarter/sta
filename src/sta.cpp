@@ -67,7 +67,7 @@ void compute_line_stats(){
 
 void print_help(){
 	cerr << " " << endl;	
-	cerr << "Usage: cat file.txt | sta [options]" << endl;	
+	cerr << "Usage: sta [options] < file.txt" << endl;	
 	cerr << " " << endl;	
 	cerr << "--help		prints this help " << endl;	
 	cerr << " " << endl;	
