@@ -5,13 +5,13 @@ Simple statistics from the command line interface (CLI), fast.
 
 ### Description
 
-This tool is a lightweight, basic, fast tool for calculating basic descriptive stastics from the command line. Inspired by https://github.com/nferraz/st, this project differs in that it is written in c++, allowing for the faster computation of statistics given larger non-trivial data sets.
+This is a lightweight, fast tool for calculating basic descriptive stastics from the command line. Inspired by https://github.com/nferraz/st, this project differs in that it is written in C++, allowing for faster computation of statistics given larger non-trivial data sets.
 
 Additions include the choice of biased vs unbiased estimators and the option to use the compensated variant algorithm. 
 
 Given a file of 1,000,000 ascending numbers, a simple test on a 2.5GHz dual core macbook using bash time showed sta takes less than a second to complete, compared to 14 seconds using st.
 
-### Installing st
+### Installing sta
 
 Run ./autogen.sh, ./configure, make, and make install.
  
@@ -34,7 +34,7 @@ Imagine you have this sample file:
     9
     10
 
-To run sta is simple: 
+Running sta is simple: 
 
 	$ cat numbers.txt | sta
 	N	max	min	sum	mean	sd	
@@ -46,7 +46,7 @@ To extract individual bits of information:
 	sum	sd	var	
 	55	2.87228	8.25
 
-sta runs in sample mode by default (meaning we normalise with N). If you want to output the population variance/standard deviation, just add the flag --population
+sta runs in sample mode by default (meaning we normalise with N). If you want to unbiased statistics, i.e., normalise with N-1, then just add the flag --population
 
 	$ cat numbers.txt | sta --sum --sd --var --population
 	sum	sd	var	
@@ -77,11 +77,6 @@ To transpose the output, run:
 	Q3	76
 	max	100
 
-By default, sta uses a biased estimator. To use an unbiased estimator, i.e normalise by n-1:
-
-	$ cat numbers.txt | sta --population
-	N	min	max	sum	mean	sd	sderr	
-	100	1	100	5050	50.5	29.0115	2.90115
 ### Formating
 
 sta works with long doubles, and can process numbers in the following formats:
