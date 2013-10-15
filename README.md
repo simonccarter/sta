@@ -5,9 +5,13 @@ Simple statistics from the command line interface (CLI), fast.
 
 ### Description
 
-This tool is a lightweight, basic, fast tool for calculating basic descriptive stastics from the command line. Inspired by https://github.com/nferraz/st, this project differs in that it is written in c++, allowing for the fast computation of statistics given large data sets. It works with stdin, so can be used downline of other programs. 
+This tool is a lightweight, basic, fast tool for calculating basic descriptive stastics from the command line. Inspired by https://github.com/nferraz/st, this project differs in that it is written in c++, allowing for the faster computation of statistics given large data sets. It works with stdin, so can be used downline of other programs. 
+
+Given a file of 1000000 ascending numbers, a simple test on my 2.5ghz macbook using bash time showed sta takes less than a second to complete, compared to 14 seconds using st.
 
 ### Installing st
+
+Run ./autogen.sh, ./configure, make, and make install.
 
 ### Usage
     cat file | sta [options]
@@ -69,11 +73,27 @@ sta works with long doubles, and can process numbers in the following formats:
 	--population
 	--compensated
 
+#### Testing.
+
+The example directory contains 2 scripts to create some example files:
+
+	$./examples/create_example_asc.pl n > some_file_with_n_numbers_asc  
+
+and
+
+	$./examples/create_example_rand.pl n > some_file_with_n_numbers_rand  
+
+To see how long st or sta takes to output the various statistics, call:
+	$./examples/time_sta.sh examples/large_file_1m	
+
+and
+
+	$./examples/time_st.sh examples/large_file_1m	
+
 ### ToDo
 
 	--Add online varient
-	--Prettify code
-
+	
 ### Contributing
 
 I've not written c++ in a long time, so please do send comments, suggestions and bug reports to:

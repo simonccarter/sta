@@ -13,7 +13,10 @@ using namespace std;
 
 /* FLAGS */
 static int brief_flag;
+static int delimiter_flag;
 static int transpose_flag;
+static int q1_flag;
+static int q3_flag;
 static int n_flag;
 static int min_flag;
 static int max_flag;
@@ -30,6 +33,9 @@ static int help_flag;
 static int sort_flag; //redundent?
 static int quartiles_flag;
 static int all_flag;
+
+/* VARIABLES */
+string delimiter = "\t";
 
 /* DATA STRUCTURES */
 vector<long double> * stats = new vector<long double>();
@@ -65,22 +71,25 @@ void print_help(){
 	cerr << "--help		prints this help " << endl;	
 	cerr << " " << endl;	
 	cerr << "Desriptive Stastistics: " << endl;	
-	cerr << "--sum		sum" << endl;	
 	cerr << "--mean		average" << endl;	
 	cerr << "--median	median" << endl;	
 	cerr << "--min		min point" << endl;	
 	cerr << "--max		max point" << endl;	
+	cerr << "--n		sample size" << endl;	
 	cerr << "--sd		standard deviation" << endl;	
 	cerr << "--sderr	standard error of the mean" << endl;	
-	cerr << "--var		variance" << endl;	
-	cerr << "--n		sample size" << endl;	
+	cerr << "--sum		sum" << endl;	
 	cerr << "--q		quartiles" << endl;	
+	cerr << "--q1		first quartile" << endl;	
+	cerr << "--q3		third quartile" << endl;	
+	cerr << "--var		variance" << endl;	
 	cerr << " " << endl;	
 	cerr << "Options: " << endl;	
 	cerr << "--brief		brief mode; only values are output" << endl;	
 	cerr << "--compensated		compenssated variant" << endl;	
+	cerr << "--delimiter		specifiy string to use as delimiter" << endl;	
 	cerr << "--population		unbiased estimator (n-1)" << endl;	
-	cerr << "--t		transpose output" << endl;	
+	cerr << "--transpose		transpose output" << endl;	
 }
 
 void compute_quartiles(long double &n){
@@ -209,7 +218,7 @@ void print_stats(){
 			continue;
 		
 		if(!brief_flag)	
-			cout << *ii << "\t";
+			cout << *ii << delimiter;
 		if(transpose_flag){
 			cout << (*global_stats)[*ii]<<endl;	
 		}
@@ -221,7 +230,7 @@ void print_stats(){
 		for(vector<string>::iterator ii=opts_ordered.begin(); ii!=opts_ordered.end();++ii){
 			if ( (*opts).find(*ii)  ==  (*opts).end())
 				continue;
-			cout << (*global_stats)[*ii] << "\t";
+			cout << (*global_stats)[*ii] << delimiter;
 		}	
 		cout<<endl;
 	}
@@ -230,48 +239,54 @@ void print_stats(){
 void read_parameters(int argc, char **argv){
 	int c;
 	while (1){
-	   static struct option long_options[] = {
-	       /* These options set a flag. */
-	       {"brief", no_argument,       &brief_flag, 1},
-	       {"transpose", no_argument,       &transpose_flag, 1},
-	       {"sum", no_argument,       &sum_flag, 1},
-	       {"help", no_argument,       &help_flag, 1},
-	       {"min",   no_argument,       &min_flag, 1},
-	       {"max",   no_argument,       &max_flag, 1},
-	       {"mean",   no_argument,       &mean_flag, 1},
-	       {"median",   no_argument,       &median_flag, 1},
-	       {"sd",   no_argument,       &sd_flag, 1},
-	       {"sderr",   no_argument,       &sderr_flag, 1},
-	       {"var",   no_argument,       &var_flag, 1},
-	       {"n",   no_argument,       &n_flag, 1},
-	       {"population",   no_argument,       &population_flag, 1},
-	       {"compensated",   no_argument,       &comp_flag, 1},	
-	       {"q",   no_argument,       &quartiles_flag, 1},	
-	       {"all",   no_argument,       &all_flag, 1},	
-	       {0, 0, 0, 0}
-	     };
-	   int option_index = 0;
-	   c = getopt_long_only (argc, argv, "",
-			    long_options, &option_index);
-	   if (c == -1)
-	     break;
+		static struct option long_options[] = {
+		       /* These options set a flag. */
+		       {"brief", no_argument,       &brief_flag, 1},
+		       {"transpose", no_argument,       &transpose_flag, 1},
+		       {"sum", no_argument,       &sum_flag, 1},
+		       {"help", no_argument,       &help_flag, 1},
+		       {"min",   no_argument,       &min_flag, 1},
+		       {"max",   no_argument,       &max_flag, 1},
+		       {"mean",   no_argument,       &mean_flag, 1},
+		       {"median",   no_argument,       &median_flag, 1},
+		       {"sd",   no_argument,       &sd_flag, 1},
+		       {"sderr",   no_argument,       &sderr_flag, 1},
+		       {"var",   no_argument,       &var_flag, 1},
+		       {"n",   no_argument,       &n_flag, 1},
+		       {"population",   no_argument,       &population_flag, 1},
+		       {"compensated",   no_argument,       &comp_flag, 1},	
+		       {"delimiter",   required_argument, 0, 0},	
+		       {"q",   no_argument,       &quartiles_flag, 1},	
+		       {"q1",   no_argument,       &q1_flag, 1},	
+		       {"q3",   no_argument,       &q3_flag, 1},	
+		       {"all",   no_argument,       &all_flag, 1},	
+		       {0, 0, 0, 0}
+		};
+		int option_index = 0;
+		c = getopt_long_only (argc, argv, "",
+		    long_options, &option_index);
+		if (c == -1)
+		     break;
 
-	   switch (c)
-	     {
-	     case 0:
-	       /* If this option set a flag, do nothing else now. */
-	       if (long_options[option_index].flag != 0)
-		 break;
-	       printf ("option %s", long_options[option_index].name);
-	       if (optarg)
-		 printf (" with arg %s", optarg);
-	       printf ("\n");
-	       break;
-	     case '?':
-	     default:
-		abort;
-	     }
-	 }
+		switch (c){
+			case 0:
+			       /* If this option set a flag, do nothing else now. */
+				if (long_options[option_index].flag != 0)
+					break;
+				if (strcmp(long_options[option_index].name,"delimiter")==0){
+					delimiter = optarg;
+				}
+				
+				//printf ("option %s", long_options[option_index].name);
+				//if (optarg)
+				// printf (" with arg %s", optarg);
+				//printf ("\n");
+				break;
+			case '?':
+			default:
+			 abort();
+		}
+	}
 
 	if (help_flag){
 		print_help();
@@ -299,6 +314,15 @@ void read_parameters(int argc, char **argv){
 		(*opts)["mean"] = 1;
 	if (var_flag)
 		(*opts)["var"] = 1;
+	if (q1_flag){
+		(*opts)["Q1"] = 1;
+		sort_flag = 1;	
+	}
+	if (q3_flag){
+		(*opts)["Q3"] = 1;
+		sort_flag = 1;	
+	}
+
 	if (all_flag){
 		(*opts)["quartiles"] = 1;
 		(*opts)["min"] = 1;
@@ -335,11 +359,20 @@ void read_parameters(int argc, char **argv){
              printf ("%s ", argv[optind++]);
            putchar ('\n');
 	}	
-
+	int subtract = 0;
+	if(population_flag)
+		subtract++;
+	if(sample_flag)
+		subtract++;
+	if(transpose_flag)
+		subtract++;
+	if(brief_flag)
+		subtract++;
+	
 	/**
 	If opts is empty, print out summary info, and assume sample statistics
 	**/
-	if((*opts).size()==0){
+	if((*opts).size()==subtract){
 		(*opts)["sum"] = 1;
 		(*opts)["N"] = 1;
 		(*opts)["min"] = 1;
