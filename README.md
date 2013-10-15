@@ -84,6 +84,7 @@ and
 	$./examples/create_example_rand.pl n > some_file_with_n_numbers_rand  
 
 To see how long st or sta takes to output the various statistics, call:
+
 	$./examples/time_sta.sh examples/large_file_1m	
 
 and
