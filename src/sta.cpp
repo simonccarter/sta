@@ -71,7 +71,7 @@ void print_help(){
 	cerr << " " << endl;	
 	cerr << "--help		prints this help " << endl;	
 	cerr << " " << endl;	
-	cerr << "Desriptive Stastistics: " << endl;	
+	cerr << "Descriptive Stastistics: " << endl;	
 	cerr << "--mean		average" << endl;	
 	cerr << "--median	median" << endl;	
 	cerr << "--min		min point" << endl;	
@@ -87,8 +87,8 @@ void print_help(){
 	cerr << " " << endl;	
 	cerr << "Options: " << endl;	
 	cerr << "--brief		brief mode; only values are output" << endl;	
-	cerr << "--compensated		compenssated variant" << endl;	
-	cerr << "--delimiter		specifiy string to use as delimiter" << endl;	
+	cerr << "--compensated		compensated variant" << endl;	
+	cerr << "--delimiter		specify string to use as delimiter" << endl;	
 	cerr << "--population		unbiased estimator (n-1)" << endl;	
 	cerr << "--transpose		transpose output" << endl;	
 }
