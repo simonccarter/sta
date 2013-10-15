@@ -5,17 +5,17 @@ Simple statistics from the command line interface (CLI), fast.
 
 ### Description
 
-This tool is a lightweight, basic, fast tool for calculating basic descriptive stastics from the command line. Inspired by https://github.com/nferraz/st, this project differs in that it is written in c++, allowing for the faster computation of statistics given large data sets. It works with stdin, so can be used downline of other programs. 
+This tool is a lightweight, basic, fast tool for calculating basic descriptive stastics from the command line. Inspired by https://github.com/nferraz/st, this project differs in that it is written in c++, allowing for the faster computation of statistics given large data sets.
 
-Given a file of 1000000 ascending numbers, a simple test on my 2.5ghz macbook using bash time showed sta takes less than a second to complete, compared to 14 seconds using st.
+Additions include the choice of biased vs unbiased estimators and the option to use the compensated variant algorithm. 
+
+Given a file of 1,000,000 ascending numbers, a simple test on a 2.5GHz dual core macbook using bash time showed sta takes less than a second to complete, compared to 14 seconds using st.
 
 ### Installing st
 
-Run ./autogen.sh, ./configure, make, and make install. You can optionally run:
+Run ./autogen.sh, ./configure, make, and make install. You can then optionally run:
 
     $make clean distclean
-
-to clean up the directory after installing. 
 
 ### Usage
     cat file | sta [options]
