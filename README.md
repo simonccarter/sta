@@ -46,13 +46,13 @@ To extract individual bits of information:
 	sum	sd	var	
 	55	2.87228	8.25
 
-sta runs in sample mode by default (meaning we normalise with N). If you want to unbiased statistics, i.e., normalise with N-1, then just add the flag --population
+sta runs in sample mode by default (meaning we normalise with N). If you want to unbiased statistics, i.e. normalise with N-1, then just add the flag --population
 
 	$ cat numbers.txt | sta --sum --sd --var --population
 	sum	sd	var	
 	55	3.02765	9.16667	
 
-Worried about precision? You can calculate variance instead using the  compsensated variant algorithm (http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Compensated_variant): 
+Worried about precision? You can calculate variance instead using the compsensated variant algorithm (http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Compensated_variant): 
 
 	$ cat numbers.txt | sta --var --population --compensated
 
