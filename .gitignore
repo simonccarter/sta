@@ -1,0 +1,19 @@
+*.o
+sta
+
+# autotools-generated
+.deps
+.dirstamp
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+configure
+config.log
+config.status
+depcomp
+install-sh
+missing
+
+# editor cruft
+*.sw[op]
