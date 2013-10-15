@@ -13,10 +13,8 @@ Given a file of 1,000,000 ascending numbers, a simple test on a 2.5GHz dual core
 
 ### Installing st
 
-Run ./autogen.sh, ./configure, make, and make install. You can then optionally run:
-
-    $make clean distclean
-
+Run ./autogen.sh, ./configure, make, and make install.
+ 
 ### Usage
     cat file | sta [options]
 
@@ -40,7 +38,7 @@ To run sta is simple:
 
 	$ cat numbers.txt | sta
 	N	max	min	sum	mean	sd	
-	0	10	1	55	5.5	2.87228	 
+	100	10	1	55	5.5	2.87228	 
 
 To extract individual bits of information:
 
@@ -58,6 +56,12 @@ Worried about precision? You can calculate variance instead using the  compsensa
 
 	$ cat numbers.txt | sta --var --population --compensated
 
+Want to compute quartiles? Run:
+
+	$ cat file | st --q
+	N	min	max	sum	mean	stddev
+	100	1	100	5050	50.5	29.0115
+
 ### Formating
 
 sta works with long doubles, and can process numbers in the following formats:
@@ -72,10 +76,14 @@ sta works with long doubles, and can process numbers in the following formats:
 	--mean
 	--min
 	--max
+	--q
+	--q1
+	--q3
 	--sd
 	--sderr
 	--population
 	--compensated
+	--brief
 
 #### Testing.
 
