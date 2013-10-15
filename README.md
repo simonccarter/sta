@@ -58,8 +58,13 @@ Worried about precision? You can calculate variance instead using the  compsensa
 
 Want to compute quartiles? Run:
 
-	$ cat file | st --q
-	N	min	max	sum	mean	stddev
+	$ cat file | sta --q
+	N	min	Q1	median	Q3	max	
+	100	1	26	50.5	76	100	
+
+Don't want to see the column names? Run:
+
+	$ cat file | sta --q --brief
 	100	1	100	5050	50.5	29.0115
 
 ### Formating
