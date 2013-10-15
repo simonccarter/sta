@@ -122,6 +122,7 @@ and
 ### ToDo
 
 	--Add online variant
+	--Clarify what is meant by population flag, and resolve any other ambigious uses of the term (including unbiased).
 	
 ### Contributing
 
