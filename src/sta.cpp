@@ -12,10 +12,13 @@
 using namespace std;
 
 /* FLAGS */
+static int brief_flag;
+static int transpose_flag;
 static int n_flag;
 static int min_flag;
 static int max_flag;
 static int mean_flag;
+static int median_flag;
 static int sum_flag;
 static int sd_flag;
 static int sderr_flag;
@@ -64,17 +67,20 @@ void print_help(){
 	cerr << "Desriptive Stastistics: " << endl;	
 	cerr << "--sum		sum" << endl;	
 	cerr << "--mean		average" << endl;	
+	cerr << "--median	median" << endl;	
 	cerr << "--min		min point" << endl;	
 	cerr << "--max		max point" << endl;	
 	cerr << "--sd		standard deviation" << endl;	
+	cerr << "--sderr	standard error of the mean" << endl;	
 	cerr << "--var		variance" << endl;	
 	cerr << "--n		sample size" << endl;	
 	cerr << "--q		quartiles" << endl;	
 	cerr << " " << endl;	
 	cerr << "Options: " << endl;	
+	cerr << "--brief		brief mode; only values are output" << endl;	
 	cerr << "--compensated		compenssated variant" << endl;	
 	cerr << "--population		unbiased estimator (n-1)" << endl;	
-	cerr << " " << endl;	
+	cerr << "--t		transpose output" << endl;	
 }
 
 void compute_quartiles(long double &n){
@@ -99,9 +105,8 @@ void compute_quartiles(long double &n){
 
 /* COMPUTE GLOBAL STATS */
 void compute_global_stats(){
-	//mean
-	long double mean = (*stats).at(1) / (*stats).at(4); 
 	long double n = (*stats).at(4);
+	long double mean = (*stats).at(1) / n; 
 
 	//sum of squared deviations
 	long double sum = 0;
@@ -141,8 +146,14 @@ void compute_global_stats(){
 		compute_quartiles(n);
 	}	
 
-	long double sderr = (samp_sd / sqrt(n));
+	//standard error of the mean	
+	long double sderr_s = (samp_sd / sqrt(n));
+	long double sderr_p = (pop_sd / sqrt(n));
 
+	//standard error of the mean, comp variants
+	long double sderr_s_c = (samp_sd_comp / sqrt(n));
+	long double sderr_p_c = (pop_sd_comp / sqrt(n));
+	
 	/* INIT GLOBAL STATS */
 	(*global_stats)["N"] = n;
 	(*global_stats)["mean"] = mean;
@@ -152,23 +163,29 @@ void compute_global_stats(){
 	(*global_stats)["min"] = (*stats).at(2);
 	(*global_stats)["max"] = (*stats).at(3);
 
-	(*global_stats)["sderr"] = sderr;
-
+	//population stats with compensated version
 	if( (*opts).find("population") != (*opts).end() && (*opts).find("compensated") != (*opts).end()){
 		(*global_stats)["sd"] = pop_sd_comp;
 		(*global_stats)["var"] = comp_var_p;
+		(*global_stats)["sderr"] = sderr_p_c;
 	}
+	//population stats 
 	if( (*opts).find("population") != (*opts).end() && (*opts).find("compensated") == (*opts).end() ) {
 		(*global_stats)["sd"] = pop_sd;
 		(*global_stats)["var"] = var_p;
+		(*global_stats)["sderr"] = sderr_p;
 	}
+	//sample stats with compensated version
 	if( (*opts).find("population") == (*opts).end() && (*opts).find("compensated") != (*opts).end()){
 		(*global_stats)["sd"] = samp_sd_comp;
 		(*global_stats)["var"] = comp_var_s;
+		(*global_stats)["sderr"] = sderr_s_c;
 	}
+	//sample stats
 	if( (*opts).find("population") == (*opts).end() && (*opts).find("compensated") == (*opts).end() ) {
 		(*global_stats)["sd"] = samp_sd;
 		(*global_stats)["var"] = var_s;
+		(*global_stats)["sderr"] = sderr_s;
 	}
 
 }
@@ -186,22 +203,28 @@ void print_stats(){
 	opts_ordered.push_back("sd");
 	opts_ordered.push_back("sderr");
 	opts_ordered.push_back("var");
-	
-	string output = " "; 
-	for(vector<string>::iterator ii=opts_ordered.begin(); ii!=opts_ordered.end();++ii){
-		if ( (*opts).find(*ii)  ==  (*opts).end()){
-			continue;
-		}
-		cout << *ii << "\t";
 
-	}	
-	cout<<endl;
 	for(vector<string>::iterator ii=opts_ordered.begin(); ii!=opts_ordered.end();++ii){
 		if ( (*opts).find(*ii)  ==  (*opts).end())
 			continue;
-		cout << (*global_stats)[*ii] << "\t";
-	}	
-	cout<<endl;
+		
+		if(!brief_flag)	
+			cout << *ii << "\t";
+		if(transpose_flag){
+			cout << (*global_stats)[*ii]<<endl;	
+		}
+	}
+	if(!transpose_flag)	
+		cout<<endl;
+
+	if(!transpose_flag){
+		for(vector<string>::iterator ii=opts_ordered.begin(); ii!=opts_ordered.end();++ii){
+			if ( (*opts).find(*ii)  ==  (*opts).end())
+				continue;
+			cout << (*global_stats)[*ii] << "\t";
+		}	
+		cout<<endl;
+	}
 }
 
 void read_parameters(int argc, char **argv){
@@ -209,11 +232,14 @@ void read_parameters(int argc, char **argv){
 	while (1){
 	   static struct option long_options[] = {
 	       /* These options set a flag. */
+	       {"brief", no_argument,       &brief_flag, 1},
+	       {"transpose", no_argument,       &transpose_flag, 1},
 	       {"sum", no_argument,       &sum_flag, 1},
 	       {"help", no_argument,       &help_flag, 1},
 	       {"min",   no_argument,       &min_flag, 1},
 	       {"max",   no_argument,       &max_flag, 1},
 	       {"mean",   no_argument,       &mean_flag, 1},
+	       {"median",   no_argument,       &median_flag, 1},
 	       {"sd",   no_argument,       &sd_flag, 1},
 	       {"sderr",   no_argument,       &sderr_flag, 1},
 	       {"var",   no_argument,       &var_flag, 1},
@@ -247,6 +273,10 @@ void read_parameters(int argc, char **argv){
 	     }
 	 }
 
+	if (help_flag){
+		print_help();
+		return;
+	}
 	if (sum_flag)
 		(*opts)["sum"] = 1;
 	if (n_flag)
@@ -284,10 +314,6 @@ void read_parameters(int argc, char **argv){
 		(*opts)["sderr"] = 1;
 		sort_flag = 1;
 	}
-	if (help_flag){
-		print_help();
-		return;
-	}
 	if (quartiles_flag){
 		(*opts)["N"] = 1;
 		(*opts)["quartiles"] = 1;
@@ -298,7 +324,10 @@ void read_parameters(int argc, char **argv){
 		(*opts)["max"] = 1;
 		sort_flag = 1;	
 	}
-
+	if(median_flag){
+		(*opts)["median"] = 1;
+		sort_flag = 1;	
+	}
        /* Print any remaining command line arguments (not options). */
 	if (optind < argc){
            printf ("non-option ARGV-elements: ");
