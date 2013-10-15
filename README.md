@@ -5,7 +5,7 @@ Simple statistics from the command line interface (CLI), fast.
 
 ### Description
 
-This tool is a lightweight, basic, fast tool for calculating basic descriptive stastics from the command line. Inspired by https://github.com/nferraz/st, this project differs in that it is written in c++, allowing for the faster computation of statistics given large data sets.
+This tool is a lightweight, basic, fast tool for calculating basic descriptive stastics from the command line. Inspired by https://github.com/nferraz/st, this project differs in that it is written in c++, allowing for the faster computation of statistics given larger non-trivial data sets.
 
 Additions include the choice of biased vs unbiased estimators and the option to use the compensated variant algorithm. 
 
