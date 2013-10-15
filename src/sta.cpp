@@ -217,7 +217,7 @@ void print_stats(){
 			cout << global_stats[*ii]<<endl;	
 		}
 	}
-	if(!transpose_flag)	
+	if(!transpose_flag && !brief_flag)	
 		cout<<endl;
 
 	if(!transpose_flag){
@@ -302,8 +302,6 @@ void read_parameters(int argc, char **argv){
 		opts["compensated"] = 1;
 	if (sample_flag)
 		opts["sample"] = 1;
-	if (population_flag)
-		opts["population"] = 1;
 	if (mean_flag)
 		opts["mean"] = 1;
 	if (var_flag)
@@ -316,7 +314,6 @@ void read_parameters(int argc, char **argv){
 		opts["Q3"] = 1;
 		sort_flag = 1;	
 	}
-
 	if (all_flag){
 		opts["quartiles"] = 1;
 		opts["min"] = 1;
@@ -353,20 +350,11 @@ void read_parameters(int argc, char **argv){
              printf ("%s ", argv[optind++]);
            putchar ('\n');
 	}	
-	int subtract = 0;
-	if(population_flag)
-		subtract++;
-	if(sample_flag)
-		subtract++;
-	if(transpose_flag)
-		subtract++;
-	if(brief_flag)
-		subtract++;
-	
+
 	/**
 	If opts is empty, print out summary info, and assume sample statistics
 	**/
-	if(opts.size()==subtract){
+	if(opts.size()==0){
 		opts["sum"] = 1;
 		opts["N"] = 1;
 		opts["min"] = 1;
