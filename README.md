@@ -11,7 +11,11 @@ Given a file of 1000000 ascending numbers, a simple test on my 2.5ghz macbook us
 
 ### Installing st
 
-Run ./autogen.sh, ./configure, make, and make install.
+Run ./autogen.sh, ./configure, make, and make install. You can optionally run:
+
+    $make clean distclean
+
+to clean up the directory after installing. 
 
 ### Usage
     cat file | sta [options]
