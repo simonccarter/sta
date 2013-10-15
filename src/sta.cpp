@@ -39,29 +39,29 @@ static int all_flag;
 string delimiter = "\t";
 
 /* DATA STRUCTURES */
-vector<long double> * stats = new vector<long double>();
-vector<long double> * points = new vector<long double>();
-map<string, long double> * global_stats = new map<string, long double>();
-map<string,int> * opts = new map<string, int>();	
+vector<long double> stats;
+vector<long double> points;
+map<string, long double> global_stats;
+map<string, int> opts;
 
 /* STATS COMPUTED AT THE LINE */
 void compute_line_stats(){
-	long double stat = (*stats).at(0);
+	long double stat = stats.at(0);
 
 	//sum
-	(*stats).at(1) += stat;
+	stats.at(1) += stat;
 
 	//N
-	(*stats).at(4)+=1;
+	stats.at(4)+=1;
 
 	//min
-	if ((*stats).at(2) > stat){
-		(*stats).at(2) = stat;
+	if (stats.at(2) > stat){
+		stats.at(2) = stat;
 	}
 
 	//max
-	if ((*stats).at(3) < stat){
-		(*stats).at(3) = stat; 
+	if (stats.at(3) < stat){
+		stats.at(3) = stat; 
 	}
 }
 
@@ -94,36 +94,36 @@ void print_help(){
 }
 
 void compute_quartiles(long double &n){
-	int const size = (*points).size();
+	size_t const size = points.size();
 	int const Q1 = size / 4;
 	int const Q2 = size / 2;
 	int const Q3 = Q1 + Q2;
 
 	/** PARTIAL SORT **/
-	nth_element((*points).begin(),          (*points).begin() + Q1, (*points).end());
-	nth_element((*points).begin() + Q1 + 1, (*points).begin() + Q2, (*points).end());
-	nth_element((*points).begin() + Q2 + 1, (*points).begin() + Q3, (*points).end());
+	nth_element(points.begin(),          points.begin() + Q1, points.end());
+	nth_element(points.begin() + Q1 + 1, points.begin() + Q2, points.end());
+	nth_element(points.begin() + Q2 + 1, points.begin() + Q3, points.end());
 
-	long double firq = (*points)[Q1];		
-	long double lasq = (*points)[Q3];		
-	long double median = size%2!=0 ? (*points)[Q2] : ((*points)[Q2]+(*points)[Q2-1])/2;
+	long double firq = points[Q1];
+	long double lasq = points[Q3];
+	long double median = size%2!=0 ? points[Q2] : (points[Q2]+points[Q2-1])/2;
 	
-	(*global_stats)["Q1"] = firq;
-	(*global_stats)["median"] = median; 
-	(*global_stats)["Q3"] = lasq;
+	global_stats["Q1"] = firq;
+	global_stats["median"] = median; 
+	global_stats["Q3"] = lasq;
 }
 
 /* COMPUTE GLOBAL STATS */
 void compute_global_stats(){
-	long double n = (*stats).at(4);
-	long double mean = (*stats).at(1) / n; 
+	long double n = stats.at(4);
+	long double mean = stats.at(1) / n; 
 
 	//sum of squared deviations
 	long double sum = 0;
 	//for compensated variant
 	long double sum3 = 0;
-	for (long index=0; index<(long)(*points).size(); ++index){
-		long double diff = (*points).at(index) - mean;
+	for (size_t index=0; index<points.size(); ++index){
+		long double diff = points.at(index) - mean;
 		sum += (diff * diff);
 		sum3 += diff;
 	}	
@@ -165,37 +165,37 @@ void compute_global_stats(){
 	long double sderr_p_c = (pop_sd_comp / sqrt(n));
 	
 	/* INIT GLOBAL STATS */
-	(*global_stats)["N"] = n;
-	(*global_stats)["mean"] = mean;
+	global_stats["N"] = n;
+	global_stats["mean"] = mean;
 
 	/** HORRIBLE, referening by index position !?!**/
-	(*global_stats)["sum"] = (*stats).at(1);
-	(*global_stats)["min"] = (*stats).at(2);
-	(*global_stats)["max"] = (*stats).at(3);
+	global_stats["sum"] = stats.at(1);
+	global_stats["min"] = stats.at(2);
+	global_stats["max"] = stats.at(3);
 
 	//population stats with compensated version
-	if( (*opts).find("population") != (*opts).end() && (*opts).find("compensated") != (*opts).end()){
-		(*global_stats)["sd"] = pop_sd_comp;
-		(*global_stats)["var"] = comp_var_p;
-		(*global_stats)["sderr"] = sderr_p_c;
+	if(opts.find("population") != opts.end() && opts.find("compensated") != opts.end()){
+		global_stats["sd"] = pop_sd_comp;
+		global_stats["var"] = comp_var_p;
+		global_stats["sderr"] = sderr_p_c;
 	}
 	//population stats 
-	if( (*opts).find("population") != (*opts).end() && (*opts).find("compensated") == (*opts).end() ) {
-		(*global_stats)["sd"] = pop_sd;
-		(*global_stats)["var"] = var_p;
-		(*global_stats)["sderr"] = sderr_p;
+	if(opts.find("population") != opts.end() && opts.find("compensated") == opts.end() ) {
+		global_stats["sd"] = pop_sd;
+		global_stats["var"] = var_p;
+		global_stats["sderr"] = sderr_p;
 	}
 	//sample stats with compensated version
-	if( (*opts).find("population") == (*opts).end() && (*opts).find("compensated") != (*opts).end()){
-		(*global_stats)["sd"] = samp_sd_comp;
-		(*global_stats)["var"] = comp_var_s;
-		(*global_stats)["sderr"] = sderr_s_c;
+	if(opts.find("population") == opts.end() && opts.find("compensated") != opts.end()){
+		global_stats["sd"] = samp_sd_comp;
+		global_stats["var"] = comp_var_s;
+		global_stats["sderr"] = sderr_s_c;
 	}
 	//sample stats
-	if( (*opts).find("population") == (*opts).end() && (*opts).find("compensated") == (*opts).end() ) {
-		(*global_stats)["sd"] = samp_sd;
-		(*global_stats)["var"] = var_s;
-		(*global_stats)["sderr"] = sderr_s;
+	if(opts.find("population") == opts.end() && opts.find("compensated") == opts.end() ) {
+		global_stats["sd"] = samp_sd;
+		global_stats["var"] = var_s;
+		global_stats["sderr"] = sderr_s;
 	}
 
 }
@@ -215,13 +215,13 @@ void print_stats(){
 	opts_ordered.push_back("var");
 
 	for(vector<string>::iterator ii=opts_ordered.begin(); ii!=opts_ordered.end();++ii){
-		if ( (*opts).find(*ii)  ==  (*opts).end())
+		if (opts.find(*ii) == opts.end())
 			continue;
 		
 		if(!brief_flag)	
 			cout << *ii << delimiter;
 		if(transpose_flag){
-			cout << (*global_stats)[*ii]<<endl;	
+			cout << global_stats[*ii]<<endl;	
 		}
 	}
 	if(!transpose_flag)	
@@ -229,9 +229,9 @@ void print_stats(){
 
 	if(!transpose_flag){
 		for(vector<string>::iterator ii=opts_ordered.begin(); ii!=opts_ordered.end();++ii){
-			if ( (*opts).find(*ii)  ==  (*opts).end())
+			if (opts.find(*ii)  ==  opts.end())
 				continue;
-			cout << (*global_stats)[*ii] << delimiter;
+			cout << global_stats[*ii] << delimiter;
 		}	
 		cout<<endl;
 	}
@@ -294,63 +294,63 @@ void read_parameters(int argc, char **argv){
 		return;
 	}
 	if (sum_flag)
-		(*opts)["sum"] = 1;
+		opts["sum"] = 1;
 	if (n_flag)
-		(*opts)["N"] = 1;
+		opts["N"] = 1;
 	if (min_flag)
-		(*opts)["min"] = 1;
+		opts["min"] = 1;
 	if (max_flag)
-		(*opts)["max"] = 1;
+		opts["max"] = 1;
 	if (sd_flag)
-		(*opts)["sd"] = 1;
+		opts["sd"] = 1;
 	if (sderr_flag)
-		(*opts)["sderr"] = 1;
+		opts["sderr"] = 1;
 	if (comp_flag)
-		(*opts)["compensated"] = 1;
+		opts["compensated"] = 1;
 	if (sample_flag)
-		(*opts)["sample"] = 1;
+		opts["sample"] = 1;
 	if (population_flag)
-		(*opts)["population"] = 1;
+		opts["population"] = 1;
 	if (mean_flag)
-		(*opts)["mean"] = 1;
+		opts["mean"] = 1;
 	if (var_flag)
-		(*opts)["var"] = 1;
+		opts["var"] = 1;
 	if (q1_flag){
-		(*opts)["Q1"] = 1;
+		opts["Q1"] = 1;
 		sort_flag = 1;	
 	}
 	if (q3_flag){
-		(*opts)["Q3"] = 1;
+		opts["Q3"] = 1;
 		sort_flag = 1;	
 	}
 
 	if (all_flag){
-		(*opts)["quartiles"] = 1;
-		(*opts)["min"] = 1;
-		(*opts)["Q1"] = 1;
-		(*opts)["median"] = 1;
-		(*opts)["Q3"] = 1;
-		(*opts)["max"] = 1;
-		(*opts)["var"] = 1;
-		(*opts)["mean"] = 1;
-		(*opts)["sum"] = 1;
-		(*opts)["N"] = 1;
-		(*opts)["sd"] = 1;
-		(*opts)["sderr"] = 1;
+		opts["quartiles"] = 1;
+		opts["min"] = 1;
+		opts["Q1"] = 1;
+		opts["median"] = 1;
+		opts["Q3"] = 1;
+		opts["max"] = 1;
+		opts["var"] = 1;
+		opts["mean"] = 1;
+		opts["sum"] = 1;
+		opts["N"] = 1;
+		opts["sd"] = 1;
+		opts["sderr"] = 1;
 		sort_flag = 1;
 	}
 	if (quartiles_flag){
-		(*opts)["N"] = 1;
-		(*opts)["quartiles"] = 1;
-		(*opts)["min"] = 1;
-		(*opts)["Q1"] = 1;
-		(*opts)["median"] = 1;
-		(*opts)["Q3"] = 1;
-		(*opts)["max"] = 1;
+		opts["N"] = 1;
+		opts["quartiles"] = 1;
+		opts["min"] = 1;
+		opts["Q1"] = 1;
+		opts["median"] = 1;
+		opts["Q3"] = 1;
+		opts["max"] = 1;
 		sort_flag = 1;	
 	}
 	if(median_flag){
-		(*opts)["median"] = 1;
+		opts["median"] = 1;
 		sort_flag = 1;	
 	}
        /* Print any remaining command line arguments (not options). */
@@ -373,14 +373,14 @@ void read_parameters(int argc, char **argv){
 	/**
 	If opts is empty, print out summary info, and assume sample statistics
 	**/
-	if((*opts).size()==subtract){
-		(*opts)["sum"] = 1;
-		(*opts)["N"] = 1;
-		(*opts)["min"] = 1;
-		(*opts)["max"] = 1;
-		(*opts)["mean"] = 1;
-		(*opts)["sd"] = 1;
-		(*opts)["sderr"] = 1;
+	if(opts.size()==subtract){
+		opts["sum"] = 1;
+		opts["N"] = 1;
+		opts["min"] = 1;
+		opts["max"] = 1;
+		opts["mean"] = 1;
+		opts["sd"] = 1;
+		opts["sderr"] = 1;
 	}
 }
 
@@ -393,31 +393,25 @@ int main (int argc, char **argv){
 	long double mean = 0;
 	long double sd = 0;
 
-	(*stats).push_back(sum);
-	(*stats).push_back(sum);
-	(*stats).push_back(min);
-	(*stats).push_back(max); 
-	(*stats).push_back(n); 
-	(*stats).push_back(mean); 
-	(*stats).push_back(sd); 
+	stats.push_back(sum);
+	stats.push_back(sum);
+	stats.push_back(min);
+	stats.push_back(max); 
+	stats.push_back(n); 
+	stats.push_back(mean); 
+	stats.push_back(sd); 
 
 	while(cin){
 		string input_line;
 		getline(cin,input_line);
 		if(input_line=="") continue;
 		long double stat = (long double) ::atof(input_line.c_str());
-		(*stats).at(0) = stat;
+		stats.at(0) = stat;
 		compute_line_stats();
-		(*points).push_back(stat);
+		points.push_back(stat);
 	}
 	compute_global_stats();
 	print_stats();
 	
-	delete points;
-	delete stats;
-	delete global_stats;
-	delete opts;
 	return 0;
 }
-
-
