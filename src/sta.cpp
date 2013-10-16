@@ -188,10 +188,6 @@ void compute_global_stats(){
 		global_stats["var"] = var_p;
 		global_stats["sderr"] = sderr_p;
 	}
-	cout << "sd: "<< s_sd << endl;
-	cout << "sd_comp: " << s_sd_comp << endl;
-	cout << "p_sd: "<< p_sd << endl;
-	cout << "p_sd_comp: " << p_sd_comp << endl;
 }
 
 void print_stats(){
