@@ -219,7 +219,7 @@ void print_stats(){
 
 	if(!transpose_flag){
 		for(vector<string>::iterator ii = opts_ordered.begin(); ii != opts_ordered.end(); ++ii){
-			ifopts.find(*ii) == opts.end())
+			if(opts.find(*ii) == opts.end())
 				continue;
 			cout << global_stats[*ii] << delimiter;
 		}	

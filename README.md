@@ -78,6 +78,17 @@ To transpose the output, run:
 	Q3	76
 	max	100
 
+To supply your own delimiter, run:
+
+	$ sta --delimiter $'\t\t' --sd --sum < numbers.txt 
+	sum		sd		
+	55		2.87228
+
+or
+	$ sta --delimiter XXX --sd --sum < numbers.txt 
+	sumXXXsd
+	55XXX2.87228
+
 ### Formatting
 
 `sta` works with long doubles, and can process numbers in the following formats:
