@@ -26,7 +26,6 @@ static int median_flag;
 static int sum_flag;
 static int sd_flag;
 static int sderr_flag;
-static int population_flag;
 static int sample_flag;
 static int comp_flag;
 static int var_flag;
@@ -47,9 +46,8 @@ map<string, int> opts;
 
 /* STATS COMPUTED AT THE LINE */
 static void compute_line_stats(long double x){
-    sum += x;
-    N++;
-
+	sum += x;
+	N++;
 	if (Min > x){
 		Min = x;
 	}
@@ -83,7 +81,7 @@ void print_help(){
 	cerr << "--brief		brief mode; only values are output" << endl;	
 	cerr << "--compensated		compensated variant" << endl;	
 	cerr << "--delimiter		specify string to use as delimiter" << endl;	
-	cerr << "--population		unbiased estimator (n-1)" << endl;	
+	cerr << "--sample		unbiased estimator (n-1) to use with sample scores" << endl;	
 	cerr << "--transpose		transpose output" << endl;	
 }
 
@@ -122,40 +120,40 @@ void compute_global_stats(){
 	}	
 
 	//for compensated variant biased
-	long double comp_var_s = (ssd-((sum3*sum3)/N))/N;	
+	long double comp_var_p = (ssd-((sum3*sum3)/N))/N;	
 
 	//for compensated variant unbiased when n is not equal to |population|
-	long double comp_var_p = (ssd-((sum3*sum3)/N))/N-1;	
-
-	//sample sd comp
-	long double samp_sd_comp = sqrt(comp_var_s);
+	long double comp_var_s = (ssd-((sum3*sum3)/N))/(N-1);	
 
 	//pop sd comp
-	long double pop_sd_comp = sqrt(comp_var_p);
+	long double p_sd_comp = sqrt(comp_var_p);
+
+	//sample sd comp
+	long double s_sd_comp = sqrt(comp_var_s);
+
+	//pop variance
+	long double var_p = ssd/N;
 
 	//sample variance
-	long double var_s = ssd/N;
-
-	//population variance
-	long double var_p = ssd/(N-1);
-
-	//sample sd	
-	long double samp_sd = sqrt(var_s);
+	long double var_s = ssd/(N-1);
 
 	//pop sd	
-	long double pop_sd = sqrt(var_p);
+	long double p_sd = sqrt(var_p);
+
+	//sample sd	
+	long double s_sd = sqrt(var_s);
 
 	if(sort_flag){
 		compute_quartiles(N);
 	}	
 
 	//standard error of the mean	
-	long double sderr_s = (samp_sd / sqrt(N));
-	long double sderr_p = (pop_sd / sqrt(N));
+	long double sderr_p = (p_sd / sqrt(N));
+	long double sderr_s = (s_sd / sqrt(N));
 
 	//standard error of the mean, comp variants
-	long double sderr_s_c = (samp_sd_comp / sqrt(N));
-	long double sderr_p_c = (pop_sd_comp / sqrt(N));
+	long double sderr_p_c = (p_sd_comp / sqrt(N));
+	long double sderr_s_c = (s_sd_comp / sqrt(N));
 	
 	/* INIT GLOBAL STATS */
 	global_stats["N"] = N;
@@ -166,31 +164,34 @@ void compute_global_stats(){
 	global_stats["min"] = Min;
 	global_stats["max"] = Max;
 
-	//population stats with compensated version
-	if(opts.find("population") != opts.end() && opts.find("compensated") != opts.end()){
-		global_stats["sd"] = pop_sd_comp;
-		global_stats["var"] = comp_var_p;
-		global_stats["sderr"] = sderr_p_c;
-	}
-	//population stats 
-	if(opts.find("population") != opts.end() && opts.find("compensated") == opts.end() ) {
-		global_stats["sd"] = pop_sd;
-		global_stats["var"] = var_p;
-		global_stats["sderr"] = sderr_p;
-	}
 	//sample stats with compensated version
-	if(opts.find("population") == opts.end() && opts.find("compensated") != opts.end()){
-		global_stats["sd"] = samp_sd_comp;
+	if(opts.find("sample") != opts.end() && opts.find("compensated") != opts.end()){
+		global_stats["sd"] = s_sd_comp;
 		global_stats["var"] = comp_var_s;
 		global_stats["sderr"] = sderr_s_c;
 	}
-	//sample stats
-	if(opts.find("population") == opts.end() && opts.find("compensated") == opts.end() ) {
-		global_stats["sd"] = samp_sd;
+	//sample stats 
+	if(opts.find("sample") != opts.end() && opts.find("compensated") == opts.end() ) {
+		global_stats["sd"] = s_sd;
 		global_stats["var"] = var_s;
 		global_stats["sderr"] = sderr_s;
 	}
-
+	//population stats with compensated version
+	if(opts.find("sample") == opts.end() && opts.find("compensated") != opts.end()){
+		global_stats["sd"] = p_sd_comp;
+		global_stats["var"] = comp_var_p;
+		global_stats["sderr"] = sderr_p_c;
+	}
+	//population stats
+	if(opts.find("sample") == opts.end() && opts.find("compensated") == opts.end() ) {
+		global_stats["sd"] = p_sd;
+		global_stats["var"] = var_p;
+		global_stats["sderr"] = sderr_p;
+	}
+	cout << "sd: "<< s_sd << endl;
+	cout << "sd_comp: " << s_sd_comp << endl;
+	cout << "p_sd: "<< p_sd << endl;
+	cout << "p_sd_comp: " << p_sd_comp << endl;
 }
 
 void print_stats(){
@@ -247,7 +248,7 @@ void read_parameters(int argc, char **argv){
 		       {"sderr",   no_argument,       &sderr_flag, 1},
 		       {"var",   no_argument,       &var_flag, 1},
 		       {"n",   no_argument,       &n_flag, 1},
-		       {"population",   no_argument,       &population_flag, 1},
+		       {"sample",   no_argument,       &sample_flag, 1},
 		       {"compensated",   no_argument,       &comp_flag, 1},	
 		       {"delimiter",   required_argument, 0, 0},	
 		       {"q",   no_argument,       &quartiles_flag, 1},	
@@ -300,6 +301,10 @@ void read_parameters(int argc, char **argv){
 		opts["sderr"] = 1;
 	if (comp_flag)
 		opts["compensated"] = 1;
+	if (transpose_flag)
+		opts["transpose"] = 1;
+	if (brief_flag)
+		opts["brief"] = 1;
 	if (sample_flag)
 		opts["sample"] = 1;
 	if (mean_flag)
@@ -351,10 +356,20 @@ void read_parameters(int argc, char **argv){
            putchar ('\n');
 	}	
 
+
+	int subtract = 0;
+	if(brief_flag)
+		subtract++;
+	if(comp_flag)
+		subtract++;
+	if(sample_flag)
+		subtract++;
+	if(transpose_flag)
+		subtract++;
 	/**
-	If opts is empty, print out summary info, and assume sample statistics
+	If opts is empty, print out summary info, and assume population of scores 
 	**/
-	if(opts.size()==0){
+	if(opts.size()==subtract){
 		opts["sum"] = 1;
 		opts["N"] = 1;
 		opts["min"] = 1;
