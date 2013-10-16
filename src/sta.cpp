@@ -98,7 +98,7 @@ void compute_quartiles(long double &n){
 
 	long double firq = points[Q1];
 	long double lasq = points[Q3];
-	long double median = size%2!=0 ? points[Q2] : (points[Q2]+points[Q2-1])/2;
+	long double median = size%2 != 0 ? points[Q2] : (points[Q2]+points[Q2-1])/2;
 	
 	global_stats["Q1"] = firq;
 	global_stats["median"] = median; 
@@ -113,7 +113,7 @@ void compute_global_stats(){
 	long double ssd = 0;
 	//for compensated variant
 	long double sum3 = 0;
-	for (size_t index=0; index<points.size(); ++index){
+	for(size_t index = 0; index < points.size(); ++index){
 		long double diff = points.at(index) - mean;
 		ssd += (diff * diff);
 		sum3 += diff;
@@ -208,26 +208,26 @@ void print_stats(){
 	opts_ordered.push_back("sderr");
 	opts_ordered.push_back("var");
 
-	for(vector<string>::iterator ii=opts_ordered.begin(); ii!=opts_ordered.end();++ii){
-		if (opts.find(*ii) == opts.end())
+	for(vector<string>::iterator ii = opts_ordered.begin(); ii != opts_ordered.end(); ++ii){
+		if(opts.find(*ii) == opts.end())
 			continue;
 		
 		if(!brief_flag)	
 			cout << *ii << delimiter;
 		if(transpose_flag){
-			cout << global_stats[*ii]<<endl;	
+			cout << global_stats[*ii] << endl;	
 		}
 	}
 	if(!transpose_flag && !brief_flag)	
-		cout<<endl;
+		cout << endl;
 
 	if(!transpose_flag){
-		for(vector<string>::iterator ii=opts_ordered.begin(); ii!=opts_ordered.end();++ii){
-			if (opts.find(*ii)  ==  opts.end())
+		for(vector<string>::iterator ii = opts_ordered.begin(); ii != opts_ordered.end(); ++ii){
+			ifopts.find(*ii) == opts.end())
 				continue;
 			cout << global_stats[*ii] << delimiter;
 		}	
-		cout<<endl;
+		cout << endl;
 	}
 }
 
@@ -251,10 +251,10 @@ void read_parameters(int argc, char **argv){
 		       {"sample",   no_argument,       &sample_flag, 1},
 		       {"compensated",   no_argument,       &comp_flag, 1},	
 		       {"delimiter",   required_argument, 0, 0},	
-		       {"q",   no_argument,       &quartiles_flag, 1},	
-		       {"q1",   no_argument,       &q1_flag, 1},	
-		       {"q3",   no_argument,       &q3_flag, 1},	
-		       {"all",   no_argument,       &all_flag, 1},	
+		       {"q",           no_argument, &quartiles_flag, 1},	
+		       {"q1",          no_argument, &q1_flag, 1},	
+		       {"q3",          no_argument, &q3_flag, 1},	
+		       {"all",         no_argument, &all_flag, 1},	
 		       {0, 0, 0, 0}
 		};
 		int option_index = 0;
@@ -264,22 +264,22 @@ void read_parameters(int argc, char **argv){
 		     break;
 
 		switch (c){
-			case 0:
-			       /* If this option set a flag, do nothing else now. */
-				if (long_options[option_index].flag != 0)
-					break;
-				if (strcmp(long_options[option_index].name,"delimiter")==0){
-					delimiter = optarg;
-				}
-				
-				//printf ("option %s", long_options[option_index].name);
-				//if (optarg)
-				// printf (" with arg %s", optarg);
-				//printf ("\n");
+		case 0:
+			/* If this option set a flag, do nothing else now. */
+			if (long_options[option_index].flag != 0)
 				break;
-			case '?':
-			default:
-			 abort();
+			if (strcmp(long_options[option_index].name,"delimiter") == 0){
+				delimiter = optarg;
+			}
+		
+			//printf ("option %s", long_options[option_index].name);
+			//if (optarg)
+			// printf (" with arg %s", optarg);
+			//printf ("\n");
+			break;
+		case '?':
+		default:
+			abort();
 		}
 	}
 
@@ -287,39 +287,39 @@ void read_parameters(int argc, char **argv){
 		print_help();
 		return;
 	}
-	if (sum_flag)
+	if(sum_flag)
 		opts["sum"] = 1;
-	if (n_flag)
+	if(n_flag)
 		opts["N"] = 1;
-	if (min_flag)
+	if(min_flag)
 		opts["min"] = 1;
-	if (max_flag)
+	if(max_flag)
 		opts["max"] = 1;
-	if (sd_flag)
+	if(sd_flag)
 		opts["sd"] = 1;
-	if (sderr_flag)
+	if(sderr_flag)
 		opts["sderr"] = 1;
-	if (comp_flag)
+	if(comp_flag)
 		opts["compensated"] = 1;
-	if (transpose_flag)
+	if(transpose_flag)
 		opts["transpose"] = 1;
-	if (brief_flag)
+	if(brief_flag)
 		opts["brief"] = 1;
-	if (sample_flag)
+	if(sample_flag)
 		opts["sample"] = 1;
-	if (mean_flag)
+	if(mean_flag)
 		opts["mean"] = 1;
-	if (var_flag)
+	if(var_flag)
 		opts["var"] = 1;
-	if (q1_flag){
+	if(q1_flag){
 		opts["Q1"] = 1;
 		sort_flag = 1;	
 	}
-	if (q3_flag){
+	if(q3_flag){
 		opts["Q3"] = 1;
 		sort_flag = 1;	
 	}
-	if (all_flag){
+	if(all_flag){
 		opts["quartiles"] = 1;
 		opts["min"] = 1;
 		opts["Q1"] = 1;
@@ -334,7 +334,7 @@ void read_parameters(int argc, char **argv){
 		opts["sderr"] = 1;
 		sort_flag = 1;
 	}
-	if (quartiles_flag){
+	if(quartiles_flag){
 		opts["N"] = 1;
 		opts["quartiles"] = 1;
 		opts["min"] = 1;
@@ -349,11 +349,11 @@ void read_parameters(int argc, char **argv){
 		sort_flag = 1;	
 	}
        /* Print any remaining command line arguments (not options). */
-	if (optind < argc){
-           printf ("non-option ARGV-elements: ");
-           while (optind < argc)
-             printf ("%s ", argv[optind++]);
-           putchar ('\n');
+	if(optind < argc){
+        	printf ("non-option ARGV-elements: ");
+        	while(optind < argc)
+           		printf ("%s ", argv[optind++]);
+        	putchar ('\n');
 	}	
 
 
@@ -380,14 +380,14 @@ void read_parameters(int argc, char **argv){
 	}
 }
 
-int main (int argc, char **argv){
+int main(int argc, char **argv){
 	read_parameters(argc, argv);
 
 	while(cin){
 		string input_line;
 		getline(cin,input_line);
-		if(input_line=="") continue;
-		long double stat = (long double) ::atof(input_line.c_str());
+		if(input_line == "") continue;
+		long double stat = (long double)::atof(input_line.c_str());
 		compute_line_stats(stat);
 		points.push_back(stat);
 	}

@@ -47,7 +47,7 @@ To extract individual bits of information:
 	sum	sd	var	
 	55	2.87228	8.25
 
-`sta` runs in sample mode by default (meaning we normalise with N). If you want to use unbiased statistics, i.e. normalise with N-1, then just add the `--population` flag
+`sta`, by default, assumes you have a population of scores, and thus normalises with N. If in fact you have a sample of scores, and wish to know the expected population standard deviation/variance, i.e. normalise with N-1, then just add the `--population` flag. See [Standard deviation estimation](http://en.wikipedia.org/wiki/Standard_deviation#Estimation), and [Population variance and sample variance](http://en.wikipedia.org/wiki/Variance#Population_variance_and_sample_variance)
 
 	$ sta --sum --sd --var --population < numbers.txt
 	sum	sd	var	
@@ -122,6 +122,7 @@ and
 ### ToDo
 
 	--Add online variant
+	--Clarify what is meant by population flag, and resolve any other ambigious uses of the term (including unbiased).
 	
 ### Contributing
 
