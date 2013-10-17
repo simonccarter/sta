@@ -33,7 +33,7 @@ static int var_flag;
 static int help_flag;
 static int sort_flag; //redundent?
 static int quartiles_flag;
-int percentiles_flag;
+double percentiles_flag;
 static int all_flag;
 
 /* VARIABLES */
@@ -43,9 +43,10 @@ long double N = 0, Min = LDBL_MAX, Max = LDBL_MIN, sum = 0;
 
 /* DATA STRUCTURES */
 vector<long double> points;
+vector<string> opts_ordered;
 map<string, long double> global_stats;
 map<string, int> opts;
-map<int,long double> percentiles; 
+map<double,long double> percentiles; 
 
 /* STATS COMPUTED AT THE LINE */
 static void compute_line_stats(long double x){
@@ -79,6 +80,7 @@ void print_help(){
 	cerr << "--q1		first quartile" << endl;	
 	cerr << "--q3		third quartile" << endl;	
 	cerr << "--var		variance" << endl;	
+	cerr << "--p		comma seperated list of percentiles" << endl;	
 	cerr << " " << endl;	
 	cerr << "Options: " << endl;	
 	cerr << "--brief		brief mode; only values are output" << endl;	
@@ -108,14 +110,12 @@ void compute_quartiles(long double &n){
 	global_stats["Q3"] = lasq;
 }
 
-void compute_percentile(int p){
-	//for the 20th percentile, p should be, 0.2, not 20.
-	float pn = p/100;
-	float percentile = pn * points.size();
-	cout <<"p: "<<p <<" pn: " << pn << "percentile: " << percentile << endl;
+void compute_percentile(double p){
+	double percentile = (p/100) * points.size();
 	nth_element( points.begin(), points.begin()+percentile, points.end() );
-	cout << points[percentile] <<endl;
-	percentiles[p] = points[percentile];
+	string String = static_cast<ostringstream*>( &(ostringstream() << p) )->str();
+	opts[String + "th"];
+	global_stats[String + "th"] = points[percentile];  
 }
 
 /* COMPUTE GLOBAL STATS */
@@ -160,8 +160,7 @@ void compute_global_stats(){
 		compute_quartiles(N);
 	}
 	if(percentiles_flag){
-		for(map<int,long double>::iterator ii = percentiles.begin(); ii != percentiles.end(); ++ii){
-			cout <<ii->first<<endl;
+		for(map<double,long double>::iterator ii = percentiles.begin(); ii != percentiles.end(); ++ii){
 			compute_percentile(ii->first);
 		}
 	}
@@ -210,7 +209,6 @@ void compute_global_stats(){
 }
 
 void print_stats(){
-	vector<string> opts_ordered;
 	opts_ordered.push_back("N");
 	opts_ordered.push_back("min");
 	opts_ordered.push_back("Q1");
@@ -223,19 +221,16 @@ void print_stats(){
 	opts_ordered.push_back("sderr");
 	opts_ordered.push_back("var");
 
-	if(percentiles_flag){
-		for(map<int,long double>::iterator ii = percentiles.begin(); ii != percentiles.end(); ++ii){
-		string String = static_cast<ostringstream*>( &(ostringstream() << ii->first) )->str();
-				opts_ordered.push_back(String + "th");
-				opts[String + "th"];
-				global_stats[String + "th"] = ii->second;  
+	if(percentiles_flag){	
+		for(map<double,long double>::iterator ii = percentiles.begin(); ii != percentiles.end(); ++ii){
+			string String = static_cast<ostringstream*>( &(ostringstream() << ii->first) )->str();
+			opts_ordered.push_back(String + "th");
 		}
 	}
-	
+
 	for(vector<string>::iterator ii = opts_ordered.begin(); ii != opts_ordered.end(); ++ii){
 		if(opts.find(*ii) == opts.end())
 			continue;
-		
 		if(!brief_flag)	
 			cout << *ii << delimiter;
 		if(transpose_flag){
@@ -299,15 +294,19 @@ void read_parameters(int argc, char **argv){
 			if (strcmp(long_options[option_index].name,"percentiles") == 0){
 				string numbers = optarg;
 				stringstream ss(numbers);
-				int i;
+				double i;
 				while (ss >> i){
+					if(i<0 || i>99 || fmod (i,1)!=0){
+						cout << "Error. Percentile " << i << " shoud be an integer between 0 and 99."<< endl;
+						exit(0);	
+					}
 					percentiles[i] = 0.0;
 					if (ss.peek() == ',')
 						ss.ignore();
 				}
 				percentiles_flag=1;
+				opts["percentiles"] = 1;
 			}
-
 		
 			//printf ("option %s", long_options[option_index].name);
 			//if (optarg)
