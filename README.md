@@ -63,6 +63,12 @@ Want to compute quartiles? Run:
 	N	min	Q1	median	Q3	max	
 	100	1	26	50.5	76	100	
 
+How about percentiles? Run:
+
+	$ sta --p 50,61 < numbers.txt 
+	50th	61th	
+	51	62
+
 Don't want to see the column names? Run:
 
 	$ sta --q --brief < numbers.txt
