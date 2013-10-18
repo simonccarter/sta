@@ -115,7 +115,7 @@ or
 	--q3
 	--sd
 	--sderr
-	--population
+	--sample
 	--compensated
 	--brief
 	--percentiles
