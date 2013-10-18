@@ -107,6 +107,7 @@ or
 
 	--sum
 	--mean
+	--median
 	--min
 	--max
 	--q
@@ -117,6 +118,7 @@ or
 	--population
 	--compensated
 	--brief
+	--percentiles
 
 #### Testing.
 
