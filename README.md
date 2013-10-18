@@ -119,6 +119,7 @@ or
 	--compensated
 	--brief
 	--percentiles
+	--transpose
 
 #### Testing.
 
