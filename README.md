@@ -91,6 +91,7 @@ To supply your own delimiter, run:
 	55		2.87228
 
 or
+
 	$ sta --delimiter XXX --sd --sum < numbers.txt 
 	sumXXXsd
 	55XXX2.87228
