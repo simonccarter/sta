@@ -47,15 +47,15 @@ To extract individual bits of information:
 	sum	sd	var	
 	55	2.87228	8.25
 
-`sta`, by default, assumes you have a population of scores, and thus normalises with N. If in fact you have a sample of scores, and wish to know the expected population standard deviation/variance, i.e. normalise with N-1, then just add the `--population` flag. See [Standard deviation estimation](http://en.wikipedia.org/wiki/Standard_deviation#Estimation), and [Population variance and sample variance](http://en.wikipedia.org/wiki/Variance#Population_variance_and_sample_variance)
+`sta`, by default, assumes you have a population of scores, and thus normalises with N. If in fact you have a sample of scores, and wish to know the expected population standard deviation/variance, i.e. normalise with N-1, then just add the `--sample` flag. See [Standard deviation estimation](http://en.wikipedia.org/wiki/Standard_deviation#Estimation), and [Population variance and sample variance](http://en.wikipedia.org/wiki/Variance#Population_variance_and_sample_variance)
 
-	$ sta --sum --sd --var --population < numbers.txt
+	$ sta --sum --sd --var --sample < numbers.txt
 	sum	sd	var	
 	55	3.02765	9.16667	
 
 Worried about precision? You can calculate variance instead using the [compensated variant algorithm](http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Compensated_variant): 
 
-	$ sta --var --population --compensated < numbers.txt
+	$ sta --var --sample --compensated < numbers.txt
 
 Want to compute quartiles? Run:
 
@@ -105,22 +105,22 @@ or
 
 ### Options
 
-	--sum
+	--brief
+	--compensated
 	--mean
 	--median
 	--min
 	--max
+	--percentiles	
 	--q
 	--q1
 	--q3
+	--sample
 	--sd
 	--sderr
-	--sample
-	--compensated
-	--brief
-	--percentiles
-	--transpose
-
+	--sum
+	--transpose	
+	
 #### Testing.
 
 The example directory contains 2 scripts to create some example files:
