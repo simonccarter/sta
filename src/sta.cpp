@@ -39,7 +39,7 @@ static int all_flag;
 /* VARIABLES */
 string delimiter = "\t";
 
-long double N = 0, Min = LDBL_MAX, Max = LDBL_MIN, sum = 0;
+long double N = 0, Min = LDBL_MAX, Max = -LDBL_MAX, sum = 0;
 
 /* DATA STRUCTURES */
 vector<long double> points;
