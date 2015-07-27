@@ -36,11 +36,10 @@ public:
 		sta->compute_global_stats();
 		stats = sta->get_global_stats();
 		for(map<string,long double>::iterator ii = stats.begin(); ii != stats.end(); ++ii){
-			cout << ii->first << ' ' << ii->second << '\n';
+			// cout << ii->first << ' ' << ii->second << '\n';
 		}
 	}
 	void tearDown(){
-		// sta->clear_global_stats();
 		delete sta;
 	}
 	void test_min(){
@@ -56,12 +55,10 @@ public:
 		TS_ASSERT_EQUALS(stats["sum"], 55);
 	}
 	void test_sd(){
-		long double sd = 2.87228;
-		TS_ASSERT_EQUALS(stats["sd"], sd);
+		TS_ASSERT_DELTA(stats["sd"], 2.87228, 1e-5);
 	}
 	void test_sderr(){
-		long double sderr = 0.908295;
-		TS_ASSERT_EQUALS(stats["sderr"], sderr);
+		TS_ASSERT_DELTA(stats["sderr"], 0.908295, 1e-6);
 	}
 	void insert_data (int begin, int end){
 		for(int i = begin; i<=end; i++){
