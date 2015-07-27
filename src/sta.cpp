@@ -1,10 +1,11 @@
 #include "sta.h"
 
-Sta::Sta(map<string, int> opts){
+long double N = 0, Min = LDBL_MAX, Max = -LDBL_MAX, sum = 0;
+
+Sta::Sta(std::map<string, int> opts){
 	this->opts = opts;
 }
 
-/* STATS COMPUTED AT THE LINE */
 void Sta::compute_line_stats(long double x){
 	sum += x;
 	N++;
