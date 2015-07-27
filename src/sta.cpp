@@ -6,6 +6,12 @@ Sta::Sta(std::map<string, int> opts){
 	this->opts = opts;
 }
 
+Sta::~Sta(){
+	N = 0; Min = LDBL_MAX, Max = -LDBL_MAX, sum = 0;
+	clear_global_stats();
+	clear_percentiles();
+}; 
+
 void Sta::compute_line_stats(long double x){
 	sum += x;
 	N++;
@@ -106,8 +112,6 @@ void Sta::compute_global_stats(){
 	/* INIT GLOBAL STATS */
 	global_stats["N"] = N;
 	global_stats["mean"] = mean;
-
-	/** HORRIBLE, referening by index position !?!**/
 	global_stats["sum"] = sum;
 	global_stats["min"] = Min;
 	global_stats["max"] = Max;
@@ -144,4 +148,12 @@ map<double,long double> Sta::get_percentiles(){
 
 map<string, long double> Sta::get_global_stats(){
 	return global_stats;
+}
+
+void Sta::clear_global_stats(){
+	global_stats.clear();
+}
+
+void Sta::clear_percentiles(){
+	percentiles.clear();
 }
