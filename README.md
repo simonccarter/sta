@@ -140,16 +140,6 @@ and
 
 	$./examples/time_st.sh examples/large_file_1m	
 
-#### Testing.
-
-I've recently integrated a basic testing platform using [CxxTest](http://cxxtest.com/). 
-If you want to contribute, you'll need to download CxxTest and set the required environment variables.
-
-To build the tests, run the `buildTester.sh` file in the test directory.
-Then run `$ ./tester` to run the tests.
-
-Tests are not as extensive as they could be, and contributions are welcome here as well as the main code.
- 
 ### ToDo
 
 	--Add online variant
@@ -165,4 +155,12 @@ Or fork the code on github:
 
 https://github.com/simonccarter/sta
 
-See the section above on testing for this project. 
+#### Testing.
+
+I've recently integrated a basic testing platform using [CxxTest](http://cxxtest.com/). 
+You'll need to download CxxTest and set the required environment variables to run the tests.
+
+To build the tests, run the `buildTester.sh` file in the test directory.
+Then run `$ ./tester` to run the tests.
+
+Tests are not as extensive as they could be, and contributions are welcome here as well as the main code.
