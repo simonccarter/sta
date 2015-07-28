@@ -1,3 +1,7 @@
+#ifndef STA_H
+#define STA_H
+
+#include <iostream>
 #include <vector>
 #include <float.h>
 #include <math.h>
@@ -8,26 +12,28 @@
 #include <map>
 #include <sstream>
 
+
 using namespace std;
 
 class Sta {
 private:
-	std::vector<long double> points;
-	std::map<std::string, long double> global_stats;
-	std::map<double,long double> percentiles;
-	std::map<std::string, int> opts;
+	vector<long double> points;
+	map<string, long double> global_stats;
+	map<double,long double> percentiles;
+	map<string, int> opts;
 	void clear_global_stats();
 	void clear_percentiles();
 public: 
 	void compute_line_stats(long double);
 	void compute_quartiles();
-	void computer_percentiles();
+	void compute_percentiles();
 	void initPercentile(double);
 	void compute_percentile(double);
 	void compute_global_stats();
 	map<double,long double> get_percentiles();
-	map<std::string, long double> get_global_stats();
-
-	Sta(map<string, int>);
+	map<string, long double> get_global_stats();
+	void set_opts(map<string, int>);
 	~Sta();
 };
+
+#endif

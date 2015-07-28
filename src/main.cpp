@@ -1,13 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <float.h>
-#include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
 #include <string>
-#include <algorithm> 
 #include <map>
 #include <sstream>
 #include "sta.h"
@@ -91,13 +88,15 @@ void print_stats(Sta* sta){
 		for(map<double,long double>::iterator ii = percentiles.begin(); ii != percentiles.end(); ++ii){
 			string String = static_cast<ostringstream*>( &(ostringstream() << ii->first) )->str();
 			opts_ordered.push_back(String + "th");
+			opts[String + "th"] = 1;
 		}
 	}
 
 	map<string, long double> global_stats = sta->get_global_stats();
 	for(vector<string>::iterator ii = opts_ordered.begin(); ii != opts_ordered.end(); ++ii){
-		if(opts.find(*ii) == opts.end())
+		if(opts.find(*ii) == opts.end()){
 			continue;
+		}
 		if(!brief_flag)	
 			cout << *ii << delimiter;
 		if(transpose_flag){
@@ -174,11 +173,6 @@ void read_parameters(int argc, char **argv, Sta* sta){
 				percentiles_flag=1;
 				opts["percentiles"] = 1;
 			}
-		
-			//printf ("option %s", long_options[option_index].name);
-			//if (optarg)
-			// printf (" with arg %s", optarg);
-			//printf ("\n");
 			break;
 		case '?':
 		default:
@@ -198,8 +192,9 @@ void read_parameters(int argc, char **argv, Sta* sta){
 		opts["min"] = 1;
 	if(max_flag)
 		opts["max"] = 1;
-	if(sd_flag)
+	if(sd_flag){
 		opts["sd"] = 1;
+	}
 	if(sderr_flag)
 		opts["sderr"] = 1;
 	if(comp_flag)
@@ -208,8 +203,9 @@ void read_parameters(int argc, char **argv, Sta* sta){
 		opts["transpose"] = 1;
 	if(brief_flag)
 		opts["brief"] = 1;
-	if(sample_flag)
+	if(sample_flag){
 		opts["sample"] = 1;
+	}
 	if(mean_flag)
 		opts["mean"] = 1;
 	if(var_flag)
@@ -259,7 +255,6 @@ void read_parameters(int argc, char **argv, Sta* sta){
         	putchar ('\n');
 	}	
 
-
 	int subtract = 0;
 	if(brief_flag)
 		subtract++;
@@ -285,8 +280,9 @@ void read_parameters(int argc, char **argv, Sta* sta){
 }
 
 int main(int argc, char **argv){
-	Sta * sta = new Sta(opts);
+	Sta * sta = new Sta();
 	read_parameters(argc, argv, sta);
+	sta->set_opts(opts);
 	while(cin){
 		string input_line;
 		getline(cin,input_line);
@@ -295,7 +291,7 @@ int main(int argc, char **argv){
 		sta->compute_line_stats(stat);
 	}
 	sta->compute_global_stats();
-	if (percentiles_flag) sta->computer_percentiles();
+	if (percentiles_flag) sta->compute_percentiles();
 	if (sort_flag) sta->compute_quartiles();
 	print_stats(sta);
 	return 0;

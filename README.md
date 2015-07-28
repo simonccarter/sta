@@ -122,7 +122,7 @@ or
 	--sum
 	--transpose	
 	
-#### Testing.
+#### Performance Testing.
 
 The example directory contains 2 scripts to create some example files:
 
@@ -140,9 +140,20 @@ and
 
 	$./examples/time_st.sh examples/large_file_1m	
 
+#### Testing.
+
+I've recently integrated a basic testing platform using [CxxTest](http://cxxtest.com/). 
+If you want to contribute, you'll need to download CxxTest and set the required environment variables.
+
+To build the tests, run the `buildTester.sh` file in the test directory.
+Then run `$ ./tester` to run the tests.
+
+Tests are not as extensive as they could be, and contributions are welcome here as well as the main code.
+ 
 ### ToDo
 
 	--Add online variant
+	--Add confidence intervals for mean, var, and sd. This should allow for a user supplied interval. 
 	
 ### Contributing
 
@@ -153,3 +164,5 @@ https://github.com/simonccarter/sta/issues
 Or fork the code on github:
 
 https://github.com/simonccarter/sta
+
+See the section above on testing for this project. 

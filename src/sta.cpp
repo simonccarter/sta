@@ -2,15 +2,15 @@
 
 long double N = 0, Min = LDBL_MAX, Max = -LDBL_MAX, sum = 0;
 
-Sta::Sta(std::map<string, int> opts){
-	this->opts = opts;
-}
-
 Sta::~Sta(){
 	N = 0; Min = LDBL_MAX, Max = -LDBL_MAX, sum = 0;
 	clear_global_stats();
 	clear_percentiles();
 }; 
+
+void Sta::set_opts(map<string, int> opts){
+	this->opts = opts;	
+}
 
 void Sta::compute_line_stats(long double x){
 	sum += x;
@@ -53,11 +53,10 @@ void Sta::compute_percentile(double p){
 	double percentile = (p/100) * points.size();
 	nth_element( points.begin(), points.begin()+percentile, points.end() );
 	string String = static_cast<ostringstream*>( &(ostringstream() << p) )->str();
-	opts[String + "th"];
-	global_stats[String + "th"] = points[percentile];  
+	global_stats[String + "th"] = points[percentile]; 
 }
 
-void Sta::computer_percentiles(){
+void Sta::compute_percentiles(){
 	for(map<double,long double>::iterator ii = percentiles.begin(); ii != percentiles.end(); ++ii){
 		compute_percentile(ii->first);
 	}
