@@ -141,7 +141,7 @@ void read_parameters(int argc, char **argv, Sta* sta){
 		       {"sample",   	no_argument,       &sample_flag, 1},
 		       {"compensated",  no_argument,       &comp_flag, 1},
 		       {"delimiter",   	required_argument, 0, 0},
-		       {"fixed",   		no_argument,       &fixed_flag, 1},
+		       {"fixed",        no_argument,       &fixed_flag, 1},
 		       {"q",           	no_argument, &quartiles_flag, 1},
 		       {"q1",          	no_argument, &q1_flag, 1},
 		       {"q3",          	no_argument, &q3_flag, 1},
