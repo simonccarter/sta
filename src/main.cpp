@@ -28,6 +28,7 @@ static int sderr_flag;
 static int sample_flag;
 static int comp_flag;
 static int var_flag;
+static int fixed_flag;
 static int help_flag;
 static int sort_flag; //redundent?
 static int quartiles_flag;
@@ -42,32 +43,32 @@ vector<string> opts_ordered;
 map<string, int> opts;
 
 void print_help(){
-	cerr << " " << endl;	
-	cerr << "Usage: sta [options] < file.txt" << endl;	
-	cerr << " " << endl;	
-	cerr << "--help		prints this help " << endl;	
-	cerr << " " << endl;	
-	cerr << "Descriptive Stastistics: " << endl;	
-	cerr << "--mean		average" << endl;	
-	cerr << "--median	median" << endl;	
-	cerr << "--min		min point" << endl;	
-	cerr << "--max		max point" << endl;	
-	cerr << "--n		sample size" << endl;	
-	cerr << "--sd		standard deviation" << endl;	
-	cerr << "--sderr	standard error of the mean" << endl;	
-	cerr << "--sum		sum" << endl;	
-	cerr << "--q		quartiles" << endl;	
-	cerr << "--q1		first quartile" << endl;	
-	cerr << "--q3		third quartile" << endl;	
-	cerr << "--var		variance" << endl;	
-	cerr << "--p		comma seperated list of percentiles" << endl;	
-	cerr << " " << endl;	
-	cerr << "Options: " << endl;	
-	cerr << "--brief		brief mode; only values are output" << endl;	
-	cerr << "--compensated		compensated variant" << endl;	
-	cerr << "--delimiter		specify string to use as delimiter" << endl;	
-	cerr << "--sample		unbiased estimator (n-1) to use with sample scores" << endl;	
-	cerr << "--transpose		transpose output" << endl;	
+	cerr << " " << endl;
+	cerr << "Usage: sta [options] < file.txt" << endl;
+	cerr << " " << endl;
+	cerr << "--help		prints this help " << endl;
+	cerr << " " << endl;
+	cerr << "Descriptive Stastistics: " << endl;
+	cerr << "--mean		average" << endl;
+	cerr << "--median	median" << endl;
+	cerr << "--min		min point" << endl;
+	cerr << "--max		max point" << endl;
+	cerr << "--n		sample size" << endl;
+	cerr << "--sd		standard deviation" << endl;
+	cerr << "--sderr	standard error of the mean" << endl;
+	cerr << "--sum		sum" << endl;
+	cerr << "--q		quartiles" << endl;
+	cerr << "--q1		first quartile" << endl;
+	cerr << "--q3		third quartile" << endl;
+	cerr << "--var		variance" << endl;
+	cerr << "--p		comma seperated list of percentiles" << endl;
+	cerr << " " << endl;
+	cerr << "Options: " << endl;
+	cerr << "--brief		brief mode; only values are output" << endl;
+	cerr << "--compensated		compensated variant" << endl;
+	cerr << "--delimiter		specify string to use as delimiter" << endl;
+	cerr << "--sample		unbiased estimator (n-1) to use with sample scores" << endl;
+	cerr << "--transpose		transpose output" << endl;
 }
 
 void print_stats(Sta* sta){
@@ -92,18 +93,22 @@ void print_stats(Sta* sta){
 		}
 	}
 
+    if(fixed_flag){
+      cout << fixed;
+    }
+
 	map<string, long double> global_stats = sta->get_global_stats();
 	for(vector<string>::iterator ii = opts_ordered.begin(); ii != opts_ordered.end(); ++ii){
 		if(opts.find(*ii) == opts.end()){
 			continue;
 		}
-		if(!brief_flag)	
+		if(!brief_flag)
 			cout << *ii << delimiter;
 		if(transpose_flag){
-			cout << global_stats[*ii] << endl;	
+			cout << global_stats[*ii] << endl;
 		}
 	}
-	if(!transpose_flag && !brief_flag)	
+	if(!transpose_flag && !brief_flag)
 		cout << endl;
 
 	if(!transpose_flag){
@@ -111,7 +116,7 @@ void print_stats(Sta* sta){
 			if(opts.find(*ii) == opts.end())
 				continue;
 			cout << global_stats[*ii] << delimiter;
-		}	
+		}
 		cout << endl;
 	}
 }
@@ -134,13 +139,14 @@ void read_parameters(int argc, char **argv, Sta* sta){
 		       {"var",   		no_argument,       &var_flag, 1},
 		       {"n",   			no_argument,       &n_flag, 1},
 		       {"sample",   	no_argument,       &sample_flag, 1},
-		       {"compensated",  no_argument,       &comp_flag, 1},	
-		       {"delimiter",   	required_argument, 0, 0},	
-		       {"q",           	no_argument, &quartiles_flag, 1},	
-		       {"q1",          	no_argument, &q1_flag, 1},	
-		       {"q3",          	no_argument, &q3_flag, 1},	
-		       {"all",         	no_argument, &all_flag, 1},	
-		       {"percentiles",   required_argument, 0, 0},	
+		       {"compensated",  no_argument,       &comp_flag, 1},
+		       {"delimiter",   	required_argument, 0, 0},
+		       {"fixed",   		no_argument,       &fixed_flag, 1},
+		       {"q",           	no_argument, &quartiles_flag, 1},
+		       {"q1",          	no_argument, &q1_flag, 1},
+		       {"q3",          	no_argument, &q3_flag, 1},
+		       {"all",         	no_argument, &all_flag, 1},
+		       {"percentiles",   required_argument, 0, 0},
 		       {0, 0, 0, 0}
 		};
 		int option_index = 0;
@@ -164,7 +170,7 @@ void read_parameters(int argc, char **argv, Sta* sta){
 				while (ss >> i){
 					if(i<0 || i>99 || fmod (i,1)!=0){
 						cout << "Error. Percentile " << i << " shoud be an integer between 0 and 99."<< endl;
-						exit(0);	
+						exit(0);
 					}
 					sta->initPercentile(i);
 					if (ss.peek() == ',')
@@ -212,11 +218,11 @@ void read_parameters(int argc, char **argv, Sta* sta){
 		opts["var"] = 1;
 	if(q1_flag){
 		opts["Q1"] = 1;
-		sort_flag = 1;	
+		sort_flag = 1;
 	}
 	if(q3_flag){
 		opts["Q3"] = 1;
-		sort_flag = 1;	
+		sort_flag = 1;
 	}
 	if(all_flag){
 		opts["quartiles"] = 1;
@@ -241,11 +247,11 @@ void read_parameters(int argc, char **argv, Sta* sta){
 		opts["median"] = 1;
 		opts["Q3"] = 1;
 		opts["max"] = 1;
-		sort_flag = 1;	
+		sort_flag = 1;
 	}
 	if(median_flag){
 		opts["median"] = 1;
-		sort_flag = 1;	
+		sort_flag = 1;
 	}
    /* Print any remaining command line arguments (not options). */
 	if(optind < argc){
@@ -253,7 +259,7 @@ void read_parameters(int argc, char **argv, Sta* sta){
         	while(optind < argc)
            		printf ("%s ", argv[optind++]);
         	putchar ('\n');
-	}	
+	}
 
 	int subtract = 0;
 	if(brief_flag)
@@ -266,7 +272,7 @@ void read_parameters(int argc, char **argv, Sta* sta){
 		subtract++;
 
 	/**
-	If opts is empty, print out summary info, and assume population of scores 
+	If opts is empty, print out summary info, and assume population of scores
 	**/
 	if(opts.size()==subtract){
 		opts["sum"] = 1;
