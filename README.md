@@ -106,7 +106,7 @@ or
 
 To change the output notation to fixed, supply the --fixed flag.
 
-	$ sta --fixed  < ./examples/numbers.txt
+	$ sta --fixed  < numbers.txt
 	N	min	max	sum	mean	sd	sderr	
 	10.000000	1.000000	10.000000	55.000000	5.500000	2.872281	0.908295
 
