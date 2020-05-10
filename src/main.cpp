@@ -69,6 +69,7 @@ void print_help(){
 	cerr << "--delimiter		specify string to use as delimiter" << endl;
 	cerr << "--sample		unbiased estimator (n-1) to use with sample scores" << endl;
 	cerr << "--transpose		transpose output" << endl;
+	exit(0);
 }
 
 void print_stats(Sta* sta){
