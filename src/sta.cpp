@@ -52,7 +52,9 @@ void Sta::compute_quartiles(){
 void Sta::compute_percentile(double p){
 	double percentile = (p/100) * points.size();
 	nth_element( points.begin(), points.begin()+percentile, points.end() );
-	string String = static_cast<ostringstream*>( &(ostringstream() << p) )->str();
+	ostringstream os;
+	os << p;
+	string String = os.str();
 	global_stats[String + "th"] = points[percentile]; 
 }
 
