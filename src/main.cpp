@@ -88,7 +88,9 @@ void print_stats(Sta* sta){
 	if(percentiles_flag){
 		map<double, long double> percentiles = sta->get_percentiles();
 		for(map<double,long double>::iterator ii = percentiles.begin(); ii != percentiles.end(); ++ii){
-			string String = static_cast<ostringstream*>( &(ostringstream() << ii->first) )->str();
+			ostringstream os;
+			os << ii->first;
+			string String = os.str();
 			opts_ordered.push_back(String + "th");
 			opts[String + "th"] = 1;
 		}
