@@ -1,0 +1,90 @@
+.TH STA 1 "2024-12-19" "" "User commands"
+.
+.SH NAME
+\fBsta\fR \- simple statistics from the command line
+.
+.SH DESCRIPTION
+\fBsta\fR is a lightweight, fast tool for calculating basic descriptive
+statistics from the command line. Inspired by \fBst\fR, this project differs
+in that it is written in C++, allowing for faster computation of statistics
+given larger non-trivial data sets.
+Additions include the choice of biased vs unbiased estimators
+and the option to use the compensated variant algorithm.
+
+\fBsta\fR takes data from standard input, one value per line.
+.
+.SH OPTIONS
+.SS Descriptive statistics
+To control which statistics are calculated, the following options can be used.
+Multiple options can be specified.
+.TP
+.B \-\-max
+Maximum value.
+.TP
+.B \-\-mean
+Average value.
+.TP
+.B \-\-median
+Median value.
+.TP
+.B \-\-min
+Minimum value.
+.TP
+.B \-\-n
+Sample size.
+.TP
+.BI \-\-p " LIST"
+Comma seperated list of percentiles.
+.TP
+.B \-\-q
+Quartiles (all).
+.TP
+.B \-\-q1
+First quartile only.
+.TP
+.B \-\-q3
+Third quartile only.
+.TP
+.B \-\-sd
+Standard deviation.
+.TP
+.B \-\-sderr
+Standard error of the mean.
+.TP
+.B \-\-sum
+Sum of all values.
+.TP
+.B \-\-var
+Variance.
+.PP
+If none of the above options are specified, \fBsta\fR will print the following values:
+number of samples, minimum, maximum, sum, mean, standard deviation, standard error.
+.SS Other
+.TP
+.B \-\-brief
+Brief mode. Only the values are output; all headers are skipped.
+.TP
+.B \-\-compensated
+Calculate variance using the compensated variant algorithm.
+.TP
+.BI \-\-delimiter " STRING"
+Specify string to use as delimiter.
+.TP
+.BI \-\-fixed
+Print fractional numbers in fixed-precision notation.
+.TP
+.B \-\-help
+Print a help message and exit.
+.TP
+.B \-\-sample
+Unbiased estimator (n-1) to use with sample scores.
+\fBsta\fR, by default, assumes you have a population of scores, and thus
+normalises with N. If in fact you have a sample of scores, and wish to know
+the expected population standard deviation/variance, use this option.
+.TP
+.B \-\-transpose
+Transpose output \- print all values on separate lines.
+.
+.SH COPYRIGHT
+Copyright 2013, 2015, 2016, 2020-2021 Simon Carter.
+\fBsta\fR is made available under the terms of the MIT License.
