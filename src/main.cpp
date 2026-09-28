@@ -185,7 +185,7 @@ void read_parameters(int argc, char **argv, Sta* sta){
 			break;
 		case '?':
 		default:
-			abort();
+			exit(1);
 		}
 	}
 
